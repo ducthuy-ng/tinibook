@@ -1,0 +1,33 @@
+.EditDeleteCol {
+  /*width: 90px;*/
+}
+
+.edit_btn {
+  cursor: pointer;
+}
+
+.edit_btn:hover {
+  border-radius: 5px;
+  background-color: #faf8f7;
+}
+
+.add_emp_btn {
+  padding: 10px 20px;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.title > h2 {
+  margin: 0;
+}
+
+.title_action_group {
+  gap: 10px;
+  display: flex;
+  align-items: center;
+}

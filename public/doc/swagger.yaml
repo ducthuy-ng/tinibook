@@ -1,0 +1,648 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: 'https://tini-bookstore-backend.duckdns.org/'
+    description: 'Deploy server'
+  - url: 'http://localhost:3000/'
+    description: 'Local testing server'
+paths:
+  /identity-access/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/login-body'
+      security: []
+      responses:
+        200:
+          description: >
+            Successfully authenticated.
+            The response is a JWT token with the following schema.
+            Frontend can use it for authentication purposes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/token'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          description: Internal Server Error
+  /identity-access/logout:
+    post:
+      summary: Logout
+      responses:
+        200:
+          description: Successful logout
+        400:
+          description: Missing cookie with token
+
+  /identity-access/employees:
+    get:
+      summary: Search for Employee
+      description: Returns list employees, filter with employee's ID and name
+      parameters:
+        - in: query
+          name: empName
+          schema:
+            type: string
+          description: Employee name. Result will be fuzzy matched.
+          required: false
+      responses:
+        200:
+          description: A JSON array of found employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    empId:
+                      type: string
+                      format: uuid
+                    name:
+                      type: string
+                      example: John Doe
+                    occupation:
+                      $ref: '#/components/schemas/occupation'
+    post:
+      summary: Add new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                'name':
+                  type: string
+                'ssn':
+                  description: Citizen Identification Number
+                  type: string
+                'email':
+                  type: string
+                  format: email
+                'tel':
+                  type: string
+                  format: phone
+                'role':
+                  $ref: '#/components/schemas/occupation'
+                'assigned_building':
+                  $ref: '#/components/schemas/building-id'
+
+      responses:
+        201:
+          description: Employee created
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      summary: Delete existing employee
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: number
+          required: true
+      responses:
+        200:
+          description: Employee deleted
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /identity-access/occupations:
+    get:
+      summary: Get all of available occupations
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/occupation'
+
+  /identity-access/employees/{empId}:
+    get:
+      summary: Search Employee by ID.
+      parameters:
+        - in: path
+          name: empId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/employee'
+
+  /storage/books:
+    get:
+      summary: Search for Book Title
+      parameters:
+        - in: query
+          name: bookName
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: limit
+          description: Number of return books
+          schema:
+            type: number
+          required: false
+        - in: query
+          name: offset
+          description: The offset of return
+          schema:
+            type: number
+          required: false
+      responses:
+        200:
+          description: List of matched Book Title
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    coverUrl:
+                      type: string
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: Create a new Book Title
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/book'
+      responses:
+        201:
+          description: Created
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /storage/books/isbn/{isbn}:
+    get:
+      summary: Get Book by ISBN
+      parameters:
+        - in: path
+          name: isbn
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Searched Book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/book'
+        404:
+          description: Not found
+
+  /storage/buildings:
+    get:
+      summary: Get list of all building
+      responses:
+        200:
+          description: Return list of all building
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/building'
+        404:
+          description: Failed to find Sale Receipts with ID
+
+  /finance/sale-receipts:
+    get:
+      summary: Get all Sale Receipts
+      parameters:
+        - in: query
+          name: page
+          description: Current page (1-10). Every page consists of 10 records.
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return list of all Sale Receipt
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    createddate:
+                      type: string
+                      format: timestamp
+                    price:
+                      type: number
+                    createdemployeeid:
+                      type: number
+    post:
+      summary: Insert a new Sale Receipt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                items:
+                  type: array
+                  items:
+                    properties:
+                      book_id:
+                        type: string
+                      amount:
+                        type: number
+      responses:
+        200:
+          description: Success
+
+  /finance/sale-receipt/{id}:
+    get:
+      summary: Get details of specific Sale Receipt
+      parameters:
+        - in: query
+          name: page
+          description: Current page (1-10). Every page consists of 10 records.
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return list of books registered in this Sale Receipt
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    createdDate:
+                      type: string
+                      format: timestamp
+                    totalPrice:
+                      type: number
+                    createdCashierId:
+                      type: number
+                    orderedBooks:
+                      type: array
+                      items:
+                        properties:
+                          amount:
+                            type: number
+                          isbn:
+                            type: string
+                            example: '978-604-1-19706-0'
+                          price:
+                            type: number
+                          quantity:
+                            type: number
+                          name:
+                            description: Book name
+                            type: string
+        404:
+          description: Failed to find Sale Receipts with ID
+
+  /finance/import-receipts:
+    get:
+      summary: Get all Import Receipts
+      parameters:
+        - in: query
+          name: page
+          description: Current page (1-10). Every page consists of 10 records.
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return list of all Sale Receipt
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    createddate:
+                      type: string
+                      format: timestamp
+                    price:
+                      type: number
+                    createdemployeeid:
+                      type: number
+
+    post:
+      summary: Insert a new Import Receipt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                items:
+                  type: array
+                  items:
+                    properties:
+                      book_id:
+                        type: string
+                      amount:
+                        type: number
+      responses:
+        200:
+          description: Success
+
+  /finance/import-receipt/{id}:
+    get:
+      summary: Get details of specific Import Receipt
+      parameters:
+        - in: path
+          name: id
+          description: ID of search Import Receipt
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Return list of books registered in this Sale Receipt
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    createdDate:
+                      type: string
+                      format: timestamp
+                    totalPrice:
+                      type: number
+                    createdCashierId:
+                      type: number
+                    orderedBooks:
+                      type: array
+                      items:
+                        properties:
+                          amount:
+                            type: number
+                          isbn:
+                            type: string
+                            example: '978-604-1-19706-0'
+                          price:
+                            type: number
+                          quantity:
+                            type: number
+                          name:
+                            description: Book name
+                            type: string
+        404:
+          description: Failed to find Sale Receipts with ID
+
+  /storage/get-location-of-book:
+    get:
+      summary: Get the Building location of a Book
+      parameters:
+        - in: query
+          name: bookId
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return list of all Books from building
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bookId:
+                    type: string
+                  buildingId:
+                    type: string
+                  buildingName:
+                    type: string
+                  amount:
+                    type: number
+
+  /storage/get-all-book-from-building:
+    get:
+      summary: Get all Book from a Building
+      parameters:
+        - in: query
+          name: buildingId
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return list of all buildings which store book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bookId:
+                    type: string
+                  bookName:
+                    type: string
+                  buildingId:
+                    type: string
+                  amount:
+                    type: number
+
+  /storage/import:
+    put:
+      summary: Import book into storage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bookId:
+                  type: string
+                buildingId:
+                  type: string
+                amount:
+                  type: number
+      responses:
+        200:
+          description: Import Successfully
+
+  /storage/transfer:
+    put:
+      summary: Transfer books from source to destination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bookId:
+                  type: string
+                sourceBuildingId:
+                  type: string
+                destBuildingId:
+                  type: string
+                amount:
+                  type: number
+      responses:
+        200:
+          description: Transfer Successfully
+
+  /storage/export:
+    put:
+      summary: Export book from a storage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                buildingId:
+                  type: string
+                orders:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      bookId:
+                        type: number
+                      amount:
+                        type: number
+      responses:
+        200:
+          description: Import Successfully
+
+security:
+  - bearerAuth: []
+
+components:
+  schemas:
+    occupation:
+      type: string
+      enum:
+        - 'SHOP_MANAGER'
+        - 'STORE_MANAGER'
+        - 'ACCOUNTANT'
+        - 'STAFF'
+
+    login-body:
+      properties:
+        'username':
+          type: string
+          example: 'johndoe'
+        'password':
+          type: string
+          example: '1234567890'
+
+    token:
+      properties:
+        'employeeId':
+          type: string
+          example: 1
+        'occupation':
+          $ref: '#/components/schemas/occupation'
+
+    employee:
+      properties:
+        'id':
+          type: string
+          format: uuid
+        'name':
+          type: string
+        'ssn':
+          description: Citizen Identification Number
+          type: string
+        'email':
+          type: string
+          format: email
+        'tel':
+          type: string
+          format: phone
+        'role':
+          type: string
+          example: 'Manager'
+
+    book:
+      properties:
+        'isbn':
+          type: number
+        'name':
+          type: string
+        'type':
+          type: string
+        'author':
+          type: string
+        'coverUrl':
+          type: string
+          format: url
+        'publisher':
+          type: string
+        'pagesNum':
+          type: number
+        'price':
+          type: number
+
+    building-id:
+      type: string
+      example: '001'
+
+    building:
+      properties:
+        'id':
+          $ref: '#/components/schemas/building-id'
+        'address':
+          type: string
+          example: '1 Võ Văn Ngân'
+        'type':
+          $ref: '#/components/schemas/building-type'
+
+    building-type:
+      type: string
+      enum:
+        - 'SHOP'
+        - 'WAREHOUSE'
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: API_TOKEN
+      bearerFormat: JWT
+
+  responses:
+    ClientRequestError:
+      description: An error occurred in Client request
+      content:
+        application/json:
+          schema:
+            properties:
+              'error':
+                type: string
+                example: 'Missing value'
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string

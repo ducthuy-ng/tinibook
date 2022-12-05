@@ -1,0 +1,99 @@
+.modal {
+  position: fixed;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: top 0.5s ease, background-color 0.5s ease;
+}
+
+.modal_hide {
+  top: -100%;
+  background-color: rgba(200, 200, 200, 0);
+}
+
+.modal_show {
+  top: 0;
+  background-color: rgba(200, 200, 200, 0.6);
+}
+
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 600px;
+  height: fit-content;
+
+  border: 1px black solid;
+  background-color: white;
+  padding: 25px;
+
+  gap: 25px;
+}
+
+.container {
+  /*height: 500px;*/
+  display: flex;
+  flex-direction: column;
+
+  gap: 30px;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  width: 100%;
+  gap: 10px;
+}
+
+.row_input {
+  justify-content: space-between;
+}
+
+.row_info {
+}
+
+.row_info > p {
+  margin: 0;
+}
+
+.row_info_name {
+  font-weight: bold;
+}
+
+.row_center {
+  justify-content: center;
+}
+
+.titleCloseBtn {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.closeBtn {
+  cursor: pointer;
+  font-size: 30px;
+}
+
+.button {
+  background-color: transparent;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.label {
+  font-size: 22px;
+}

@@ -1,0 +1,61 @@
+.book_card {
+  height: 49%;
+  width: 19%;
+  border: 1px solid black;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px;
+}
+
+.book_card:hover {
+  background-color: #faf8f7;
+  cursor: pointer;
+}
+
+.book_card_img_wrapper {
+  width: 100%;
+  height: 65%;
+  flex-grow: 2;
+  position: relative;
+}
+
+.book_card_img {
+  object-fit: contain;
+}
+
+.book_card_name {
+  display: -webkit-box;
+  font-size: 20px;
+  line-height: 1.5em;
+  padding: 5px;
+
+  width: 100%;
+  height: 3.2em;
+  margin: 0;
+
+  white-space: normal;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  word-break: break-word;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.book_card_amount {
+  width: 100%;
+  padding: 0 5px;
+  font-size: 18px;
+
+  color: #2d2d2d;
+  font-style: italic;
+
+  margin: 10px 0 0 0;
+}

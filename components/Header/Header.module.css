@@ -1,0 +1,58 @@
+.header {
+  height: 50px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 5px 15px;
+
+  background: #faf8f7;
+
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-sizing: content-box;
+}
+
+.header_logo_wrapper {
+  height: 100%;
+  width: 100%;
+
+  position: relative;
+}
+
+.header_logo {
+  object-fit: contain;
+}
+
+.user_info {
+  width: fit-content;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar {
+  border-radius: 50%;
+  size: 40px;
+  font-size: 40px;
+}
+
+.user_name {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.menu_button {
+  background: white;
+  color: black;
+  border: 2px solid #2d2d2d;
+
+  padding: 5px;
+}
+
+.menu_button:hover {
+  background: #e0e0e0;
+}

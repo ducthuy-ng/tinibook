@@ -1,0 +1,25 @@
+.header {
+  height: 50px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 15px;
+
+  background: #faf8f7;
+
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-sizing: content-box;
+}
+
+.header_logo_wrapper {
+  height: 100%;
+  width: 100%;
+
+  position: relative;
+}
+
+.header_logo {
+  object-fit: contain;
+}

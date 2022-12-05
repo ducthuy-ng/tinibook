@@ -1,0 +1,37 @@
+.select_container {
+  display: flex;
+  align-items: center;
+
+  appearance: none;
+
+  padding: 10px;
+
+  width: 350px;
+  height: 50px;
+
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 15px;
+
+  font-size: 18px;
+}
+
+.select_container:hover {
+  cursor: pointer;
+}
+
+.select {
+  appearance: none;
+  border: none;
+
+  flex-grow: 1;
+  font-size: 20px;
+}
+
+.select:hover {
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+}

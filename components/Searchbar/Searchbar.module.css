@@ -1,0 +1,15 @@
+.container {
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+}
+
+.SearchbarInput {
+  padding-left: 40px;
+}
+
+.iconSearch {
+  position: absolute;
+  height: 100%;
+  margin: auto 10px;
+}

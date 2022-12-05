@@ -1,0 +1,28 @@
+.box {
+  box-sizing: border-box;
+  display: flex;
+
+  align-items: center;
+  padding: 10px;
+
+  width: 350px;
+  height: 50px;
+
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 15px;
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+
+  font-size: 20px;
+}
+
+.label {
+  font-size: 20px;
+}
+
+.box:focus {
+  outline: none;
+}
