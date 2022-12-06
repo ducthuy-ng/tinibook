@@ -1,9 +1,4 @@
-import { Fetcher } from 'swr';
-
-export const fetcher: Fetcher = (...args: any[]) => {
-  // @ts-ignore
-  return fetch(...args).then((res) => res.json());
-};
-
-// @ts-ignore
-// export const fetcher = (...args) => {fetch(...args).then(res => res.json())}
+export async function fetcher<JSON = any>(input: RequestInfo, init?: RequestInit): Promise<JSON> {
+  const resp = await fetch(input, init);
+  return resp.json();
+}

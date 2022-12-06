@@ -1,0 +1,30 @@
+.header {
+  position: sticky;
+  top: 0;
+}
+
+.receiptList {
+  height: fit-content;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.receiptItem {
+  height: 50px;
+  padding: 10px;
+  display: flex;
+
+  border: black 1px solid;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bottomRow {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
