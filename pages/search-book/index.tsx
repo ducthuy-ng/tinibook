@@ -23,6 +23,7 @@ const selectHeaderForOccupation: Map<Occupation, any> = new Map([
   [Occupation.STAFF, AccountantSidebar],
   [Occupation.SHOP_MANAGER, ShopManagementSidebar],
   [Occupation.STORAGE_MANAGER, StorageManagerSidebar],
+  [Occupation.ACCOUNTANT, AccountantSidebar],
 ]);
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
