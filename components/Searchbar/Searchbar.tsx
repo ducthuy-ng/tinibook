@@ -1,8 +1,8 @@
 import React, { HTMLInputTypeAttribute } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import Input, { InputHook } from '../Input/Input';
-import styles from './Searchbar.module.css';
 import classNames from 'classnames';
+import styles from './Searchbar.module.css';
 
 type Props = {
   id?: string;

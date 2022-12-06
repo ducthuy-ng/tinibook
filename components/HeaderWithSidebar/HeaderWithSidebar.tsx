@@ -17,10 +17,19 @@ export const useHeaderWithSidebarHook = (): HeaderWithSidebarHook => {
   };
 };
 
-const HeaderWithSidebar = (props: { token: TokenType; hook: HeaderWithSidebarHook; sidebar: typeof Sidebar }) => {
+const HeaderWithSidebar = (props: {
+  className?: string;
+  token: TokenType;
+  hook: HeaderWithSidebarHook;
+  sidebar: typeof Sidebar;
+}) => {
   return (
     <>
-      <Header setSidebarDisplayStatus={props.hook.setSidebarDisplayStatus} token={props.token} />
+      <Header
+        className={props.className}
+        setSidebarDisplayStatus={props.hook.setSidebarDisplayStatus}
+        token={props.token}
+      />
       <props.sidebar isDisplay={props.hook.sidebarIsDisplay} setDisplayStatus={props.hook.setSidebarDisplayStatus} />
     </>
   );

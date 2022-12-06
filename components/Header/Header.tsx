@@ -10,6 +10,7 @@ import styles from './Header.module.css';
 import { TokenType } from '../../model/identityaccess/authService';
 
 type Props = {
+  className?: string;
   token: TokenType;
   hideMenuButton?: boolean;
   setSidebarDisplayStatus: Dispatch<SetStateAction<boolean>>;
@@ -17,7 +18,7 @@ type Props = {
 
 function Header(props: Props) {
   return (
-    <header className={classNames(styles.header)}>
+    <header className={classNames(props.className, styles.header)}>
       {props.hideMenuButton ? <></> : <MenuButton onClick={() => props.setSidebarDisplayStatus(true)} />}
       <div className={styles.header_logo_wrapper}>
         <Image className={styles.header_logo} src={logo} alt="logo" fill={true} />
