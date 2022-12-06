@@ -21,7 +21,6 @@ import {
 } from 'recharts';
 import styles from '../../styles/Accoutant.module.css';
 
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const redirect = checkRBACRedirect(ctx, Occupation.ACCOUNTANT);
   if (redirect) return redirect;
@@ -77,8 +76,10 @@ export default function Accountant(props: { token: TokenType; query: ParsedUrlQu
                 <XAxis dataKey={'month'} />
                 <YAxis />
                 <Line type={'monotone'} dataKey={'totalSale'} />
-                <Tooltip labelFormatter={(label) => `Tháng ${label}`}
-                         formatter={(value) => [`${value} (VND)`, 'Doanh thu']} />
+                <Tooltip
+                  labelFormatter={(label) => `Tháng ${label}`}
+                  formatter={(value) => [`${value} (VND)`, 'Doanh thu']}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -89,9 +90,9 @@ export default function Accountant(props: { token: TokenType; query: ParsedUrlQu
             <ResponsiveContainer width={'100%'} height={'100%'}>
               <PieChart>
                 <Pie data={saleCategories} dataKey={'amount'} nameKey={'type'}>
-                  {
-                    saleCategories.map((entry, index) => <Cell key={index} fill={colors[index]} />)
-                  }
+                  {saleCategories.map((entry, index) => (
+                    <Cell key={index} fill={colors[index]} />
+                  ))}
                 </Pie>
                 <Tooltip />
                 <Legend layout={'vertical'} align={'right'} verticalAlign={'middle'} />
