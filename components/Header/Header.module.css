@@ -26,12 +26,17 @@
 }
 
 .user_info {
+  position: relative;
   width: fit-content;
   height: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.user_info:hover {
+  cursor: pointer;
 }
 
 .avatar {
@@ -55,4 +60,50 @@
 
 .menu_button:hover {
   background: #e0e0e0;
+}
+
+.dropdown_background {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0);
+  z-index: 1;
+}
+
+.dropdown_background_show {
+  display: block;
+}
+
+.dropdown_background_hide {
+  display: none;
+}
+
+.user_dropdown {
+  position: absolute;
+  right: 0;
+  top: 60px;
+
+  padding: 10px;
+  width: 120px;
+
+  background: white;
+  border: 1px solid black;
+  border-radius: 5px;
+
+  z-index: 2;
+}
+
+.user_dropdown:hover {
+  background: #faf8f7;
+  cursor: pointer;
+}
+
+.user_dropdown_hide {
+  display: none;
+}
+
+.user_dropdown_show {
+  display: block;
 }
