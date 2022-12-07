@@ -1,9 +1,9 @@
-enum BuildingType {
+export enum BuildingType {
   SHOP = 'SHOP',
   WAREHOUSE = 'WAREHOUSE',
 }
 
-class Building {
+export class Building {
   public readonly id: string;
 
   public readonly name: string;
@@ -19,12 +19,10 @@ class Building {
   }
 }
 
-interface BuildingRepo {
+export interface BuildingRepo {
   getAll(): Promise<Array<Building>>;
 
   getById(id: string): Promise<Building>;
 
   // delete(building: Building): void;
 }
-
-export { Building, BuildingType, BuildingRepo };

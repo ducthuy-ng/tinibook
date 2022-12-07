@@ -1,6 +1,6 @@
 import { InvalidAmountTakeout } from './exceptions';
 
-class StorageItem {
+export class StorageItem {
   public readonly bookId: string;
   public readonly buildingId: string;
   public amount: number;
@@ -24,7 +24,7 @@ class StorageItem {
   }
 }
 
-class LocationView {
+export class LocationView {
   bookId: string;
   buildingId: string;
   buildingName: string;
@@ -38,7 +38,7 @@ class LocationView {
   }
 }
 
-class BookView {
+export class BookView {
   bookId: string;
   bookName: string;
   buildingId: string;
@@ -52,7 +52,7 @@ class BookView {
   }
 }
 
-interface StoreItemRepo {
+export interface StoreItemRepo {
   getAllOfBook(bookId: string): Promise<Array<LocationView>>;
 
   getAllOfBuilding(buildingId: string): Promise<Array<BookView>>;
@@ -65,5 +65,3 @@ interface StoreItemRepo {
 
   remove(storeItem: StorageItem): Promise<void>;
 }
-
-export { StorageItem, StoreItemRepo, LocationView, BookView };

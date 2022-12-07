@@ -1,11 +1,11 @@
 import { randomUUID } from 'crypto';
 
-type OrderedItem = {
+export type OrderedItem = {
   book_id: string;
   amount: number;
 };
 
-class SaleReceipt {
+export class SaleReceipt {
   id: string;
   createdDate: Date;
   orderedBooks: OrderedItem[];
@@ -31,13 +31,13 @@ class SaleReceipt {
   }
 }
 
-interface SaleReceiptRepo {
+export interface SaleReceiptRepo {
   getById(id: string): Promise<SaleReceipt>;
 
   save(receipt: SaleReceipt): Promise<void>;
 }
 
-class ImportReceipt {
+export class ImportReceipt {
   id: string;
   createdDate: Date;
   orderedBooks: OrderedItem[];
@@ -63,10 +63,8 @@ class ImportReceipt {
   }
 }
 
-interface ImportReceiptRepo {
+export interface ImportReceiptRepo {
   getById(id: string): Promise<ImportReceipt>;
 
   save(receipt: ImportReceipt): Promise<void>;
 }
-
-export { OrderedItem, SaleReceipt, SaleReceiptRepo, ImportReceipt, ImportReceiptRepo };
