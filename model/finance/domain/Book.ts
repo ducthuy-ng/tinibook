@@ -1,4 +1,4 @@
-type Book = {
+export type Book = {
   id: string;
   isbn: string;
   name: string;
@@ -8,8 +8,6 @@ type Book = {
 /***
  * A read-only repo (as book are synchronized from 1 DB)
  */
-interface BookRepo {
+export interface BookRepo {
   getById(id: string): Promise<Book>;
 }
-
-export { Book, BookRepo };
