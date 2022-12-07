@@ -11,10 +11,10 @@ stop-dev:
 	docker compose -f docker-compose.dev.yaml down
 
 lint:
-	next lint
+	npx next lint
 
 lint-fix:
-	next lint --fix
+	npx next lint --fix
 
 format:
 	npx prettier --write .
