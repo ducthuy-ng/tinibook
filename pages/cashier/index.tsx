@@ -81,21 +81,21 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
       (location: { [x: string]: string }) => location['buildingId'] == props.token.assignedBuilding
     );
 
-    // if (!locationDetail) {
-    //   popupHook.setMessage('Sách không còn tồn kho');
-    //   popupHook.setShowingState(true);
-    //   isbnHook.changeValue('');
-    //   quantityHook.changeValue('');
-    //   return;
-    // }
+    if (!locationDetail) {
+      popupHook.setMessage('Sách không còn tồn kho');
+      popupHook.setShowingState(true);
+      isbnHook.changeValue('');
+      quantityHook.changeValue('');
+      return;
+    }
 
-    // if (locationDetail['amount'] < quantity || locationDetail['amount'] < quantity) {
-    //   popupHook.setMessage('Số lượng sách không đủ');
-    //   popupHook.setShowingState(true);
-    //   isbnHook.changeValue('');
-    //   quantityHook.changeValue('');
-    //   return;
-    // }
+    if (locationDetail['amount'] < quantity || locationDetail['amount'] < quantity) {
+      popupHook.setMessage('Số lượng sách không đủ');
+      popupHook.setShowingState(true);
+      isbnHook.changeValue('');
+      quantityHook.changeValue('');
+      return;
+    }
 
     let searchRowsData = rowsData.value.get(isbnHook.value);
     if (searchRowsData) {
