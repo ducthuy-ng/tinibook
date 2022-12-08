@@ -12,7 +12,7 @@ import { setCookie } from 'nookies';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<{ token: string }>) {
   if (!req.body.username || !req.body.password) {
-    return sendInvalidQueryResponse(res);
+    return sendInvalidQueryResponse(res, 'Thiếu tên người dùng hoặc mật khẩu');
   }
 
   const { username, password } = req.body;

@@ -80,10 +80,10 @@ async function createNewEmployee(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function deleteEmployee(req: NextApiRequest, res: NextApiResponse) {
-  if (req.query.id === '') return sendInvalidQueryResponse(res);
+  if (req.query.id === '') return sendInvalidQueryResponse(res, 'Thiếu mã nhân viên');
 
   const id = parseInt(String(req.query.id || ''));
-  if (!id) return sendInvalidQueryResponse(res, 'Cannot parsed id');
+  if (!id) return sendInvalidQueryResponse(res, 'Mã nhân viên không hợp lệ');
 
   const deleteEmployee = await employeeRepo.getById(id);
   employeeRepo
