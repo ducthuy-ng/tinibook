@@ -42,7 +42,7 @@ const styleForVariant = {
 function Popup(props: Props) {
   useEffect(() => {
     props.popupHook.setCurrentVariant(props.variant || 'info');
-  }, [props.popupHook, props.variant]);
+  }, []);
 
   return (
     <div

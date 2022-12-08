@@ -100,8 +100,9 @@ function TransferForm(props: {
         props.popupHook.setShowingState(true);
         return;
       default:
+        const body = await res.json();
         props.popupHook.setCurrentVariant('warning');
-        props.popupHook.setMessage('Lỗi hệ thống. Xin thử lại sau');
+        props.popupHook.setMessage(body['message']);
         props.popupHook.setShowingState(true);
         return;
     }
