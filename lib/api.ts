@@ -49,8 +49,15 @@ export const sendCreatedResponse = (res: NextApiResponse, detail?: string) => {
   res.status(201).send({ message: 'Created', detail: detail });
 };
 
-export const sendInvalidQueryResponse = (res: NextApiResponse, detail?: string) => {
-  res.status(400).send({ message: 'Invalid query params', detail: detail });
+/**
+ * Send 400 error.
+ * The return response should follow API Error Response convention
+ * @param res
+ * @param message
+ * @param detail
+ */
+export const sendInvalidQueryResponse = (res: NextApiResponse, message?: string, detail?: string) => {
+  res.status(400).send({ message: message || 'Invalid query params', detail: detail });
 };
 
 export const sendInvalidCredentialResponse = (res: NextApiResponse, detail?: string) => {

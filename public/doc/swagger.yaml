@@ -509,6 +509,8 @@ paths:
       responses:
         200:
           description: Transfer Successfully
+        400:
+          $ref: '#/components/responses/BadRequest'
 
   /storage/export:
     put:
@@ -646,3 +648,18 @@ components:
         WWW_Authenticate:
           schema:
             type: string
+
+    BadRequest:
+      description: Client input is invalid
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+                type: string
+              message:
+                type: string
+                description: The UI-presentable message
+              detail:
+                type: string
+                description: The message intended for devs
