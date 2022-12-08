@@ -5,16 +5,16 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { sendInternalErrorResponse, sendInvalidQueryResponse, sendSuccessResponse } from '../../../lib/api';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!req.body) return sendInvalidQueryResponse(res);
+  if (!req.body) return sendInvalidQueryResponse(res, 'Yêu cầu không hợp lệ');
 
-  if (!req.body['bookId']) return sendInvalidQueryResponse(res);
+  if (!req.body['bookId']) return sendInvalidQueryResponse(res, 'Mã số sách không hợp lệ');
 
-  if (!req.body['sourceBuildingId']) return sendInvalidQueryResponse(res);
+  if (!req.body['sourceBuildingId']) return sendInvalidQueryResponse(res, 'Toà nhà nguồn không hợp lệ');
 
-  if (!req.body['destBuildingId']) return sendInvalidQueryResponse(res);
+  if (!req.body['destBuildingId']) return sendInvalidQueryResponse(res, 'Toà nhà đích không hợp lệ');
 
   const amount = parseInt(req.body['amount']);
-  if (!amount) return sendInvalidQueryResponse(res);
+  if (!amount) return sendInvalidQueryResponse(res, 'Số lượng không hợp lệ');
 
   try {
     await StorageService.transferBook(
@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     );
   } catch (err) {
     if (err instanceof InvalidAmountTakeout) {
-      return sendInvalidQueryResponse(res, 'invalid amount take out');
+      return sendInvalidQueryResponse(res, 'Lượng sách tồn kho không đủ');
     }
     console.error(`Failed to record Book export:`, err);
     return sendInternalErrorResponse(res);

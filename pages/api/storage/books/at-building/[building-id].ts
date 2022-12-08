@@ -9,7 +9,7 @@ export interface SpecificLocationFuzzySearchResult extends FuzzySearchResult {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!req.query['building-id']) {
-    sendInvalidQueryResponse(res);
+    sendInvalidQueryResponse(res, 'Thiếu mã toà nhà');
   }
   const buildingId = req.query['building-id'];
 

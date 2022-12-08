@@ -12,7 +12,7 @@ import { LocationView } from '../../../../model/bookMngt/domain/StorageItem';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   let { isbn } = req.query;
 
-  if (!isbn) return sendInvalidQueryResponse(res);
+  if (!isbn) return sendInvalidQueryResponse(res, 'Thiếu mã số sách');
 
   if (Array.isArray(isbn)) isbn = isbn[0];
 
