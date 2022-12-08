@@ -8,6 +8,9 @@ import {
   storageRepo,
 } from '../../../../lib/api';
 import { LocationView } from '../../../../model/bookMngt/domain/StorageItem';
+import { Book } from '../../../../model/bookMngt/domain/Book';
+
+export type BookSearchType = Book & { location: LocationView[] };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   let { isbn } = req.query;
