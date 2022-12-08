@@ -46,7 +46,7 @@ const ShopManager = (props: { token: TokenType; query: ParsedUrlQuery }) => {
       <HeaderWithSidebar hook={headerHook} sidebar={ShopManagementSidebar} token={props.token} />
 
       <div className={styles.title_row}>
-        <h1 className={styles.title}>Sách tồn kho {props.token.assignedBuilding}</h1>
+        <h1 className={styles.title}>Sách tại cửa hàng</h1>
         <Searchbar name={'book_name'} placeholder={'Nhập tên sách cần tìm...'} inputHook={searchBookName} />
         <input type={'submit'} hidden={true} />
       </div>
