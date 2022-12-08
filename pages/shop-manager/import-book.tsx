@@ -101,7 +101,7 @@ function ShopManagerImport(props: { token: TokenType }) {
         isbn: isbnHook.value,
         name: data.name,
         quantity: quantity,
-        price: data.price,
+        price: data.price * quantity,
       });
     }
 

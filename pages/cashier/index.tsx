@@ -13,6 +13,7 @@ import { useModal } from '../../components/Modal/Modal';
 import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
 import { ParsedUrlQuery } from 'querystring';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = checkRBACRedirect(context, Occupation.STAFF);
@@ -30,6 +31,7 @@ type InputRow = {
   isbn: string;
   name: string;
   quantity: number;
+  book_price : number ;
   price: number;
 };
 
@@ -79,32 +81,34 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
       (location: { [x: string]: string }) => location['buildingId'] == props.token.assignedBuilding
     );
 
-    if (!locationDetail) {
-      popupHook.setMessage('Sách không còn tồn kho');
-      popupHook.setShowingState(true);
-      isbnHook.changeValue('');
-      quantityHook.changeValue('');
-      return;
-    }
+    // if (!locationDetail) {
+    //   popupHook.setMessage('Sách không còn tồn kho');
+    //   popupHook.setShowingState(true);
+    //   isbnHook.changeValue('');
+    //   quantityHook.changeValue('');
+    //   return;
+    // }
 
-    if (locationDetail['amount'] < quantity || locationDetail['amount'] < quantity) {
-      popupHook.setMessage('Số lượng sách không đủ');
-      popupHook.setShowingState(true);
-      isbnHook.changeValue('');
-      quantityHook.changeValue('');
-      return;
-    }
+    // if (locationDetail['amount'] < quantity || locationDetail['amount'] < quantity) {
+    //   popupHook.setMessage('Số lượng sách không đủ');
+    //   popupHook.setShowingState(true);
+    //   isbnHook.changeValue('');
+    //   quantityHook.changeValue('');
+    //   return;
+    // }
 
     let searchRowsData = rowsData.value.get(isbnHook.value);
     if (searchRowsData) {
       searchRowsData.quantity += quantity;
+      searchRowsData.price += quantity * searchRowsData.price;
     } else {
       rowsData.value.set(isbnHook.value, {
         id: data.id,
         isbn: isbnHook.value,
         name: data.name,
         quantity: quantity,
-        price: data.price,
+        book_price: data.price,
+        price: data.price * quantity,
       });
     }
 
@@ -112,6 +116,7 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
     quantityHook.changeValue('');
     isbnHook.changeValue('');
   };
+
 
   return (
     <div>
@@ -134,7 +139,9 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
               <th>ISBN</th>
               <th>Tên sách</th>
               <th>Số lượng</th>
+              <th>Đơn giá</th>
               <th>Thành tiền</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -195,7 +202,9 @@ function Row(props: { index: number; rowItem: InputRow }) {
       <td className={cashierStyles.tdItem}>{props.rowItem.isbn}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.name}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.quantity}</td>
+      <td className={cashierStyles.tdItem}>{props.rowItem.book_price}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.price}</td>
+      <td className={cashierStyles.tdItem}> <DeleteIcon></DeleteIcon></td>
     </tr>
   );
 }
