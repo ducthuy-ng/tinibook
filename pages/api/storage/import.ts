@@ -1,7 +1,8 @@
-import { StorageService } from '../../../model/bookMngt/domain/services/StorageService';
+import { ImportItem, StorageService } from '../../../model/bookMngt/domain/services/StorageService';
 import { InvalidBuildingLocation } from '../../../model/bookMngt/domain/exceptions';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { sendInternalErrorResponse, sendInvalidQueryResponse, sendSuccessResponse } from '../../../lib/api';
+import { OrderedItem } from '../../../model/finance/domain/Receipt';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!req.body) return sendInvalidQueryResponse(res, 'Yêu cầu không hợp lệ');
@@ -10,11 +11,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!Array.isArray(req.body['orders'])) return sendInvalidQueryResponse(res, 'Đơn hàng không hợp lệ');
 
-  const orders = req.body['orders'].slice(0);
-  for (const item of orders) {
-    if (!parseInt(item['amount'])) return sendInvalidQueryResponse(res, 'Số lượng không hợp lệ');
+  const orders: ImportItem[] = [];
+  for (const item of req.body['orders'] as Partial<OrderedItem>[]) {
+    if (!item.book_id) return sendInvalidQueryResponse(res, 'Thông tin chi tiết không hợp lệ');
 
-    item['amount'] = parseInt(item['amount']);
+    const amount = parseInt(String(item.amount));
+    if (!amount) return sendInvalidQueryResponse(res, 'Số lượng không hợp lệ');
+
+    orders.push({ bookId: item.book_id, amount: amount });
   }
 
   try {
