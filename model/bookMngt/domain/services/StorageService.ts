@@ -2,16 +2,16 @@ import { StorageItem, StoreItemRepo } from '../StorageItem';
 import { InvalidBuildingLocation, StorageItemNotFound } from '../exceptions';
 import { BuildingRepo, BuildingType } from '../Building';
 
-type OrderItem = {
+export interface ImportItem {
   bookId: string;
   amount: number;
-};
+}
 
 export class StorageService {
   static storageRepo: StoreItemRepo;
   static buildingRepo: BuildingRepo;
 
-  static async importBook(buildingId: string, items: OrderItem[]) {
+  static async importBook(buildingId: string, items: ImportItem[]) {
     const building = await this.buildingRepo.getById(buildingId);
     if (building.type != BuildingType.WAREHOUSE) {
       throw new InvalidBuildingLocation(building.type);
@@ -22,11 +22,14 @@ export class StorageService {
     for (const item of items) {
       try {
         const existingStorageItem = await StorageService.storageRepo.getStorageItem(item.bookId, buildingId);
+        console.log(existingStorageItem);
         existingStorageItem.addIn(item.amount);
         storageItemList.push(existingStorageItem);
       } catch (err) {
         if (err instanceof StorageItemNotFound) {
+          console.log(item);
           const storageItem = new StorageItem(item.bookId, buildingId, item.amount);
+          console.log(storageItem);
           storageItemList.push(storageItem);
         }
       }
@@ -35,7 +38,7 @@ export class StorageService {
     await this.storageRepo.saveAll(storageItemList);
   }
 
-  static async exportBook(buildingId: string, orders: OrderItem[]) {
+  static async exportBook(buildingId: string, orders: ImportItem[]) {
     const building = await this.buildingRepo.getById(buildingId);
     if (building.type != BuildingType.SHOP) {
       throw new InvalidBuildingLocation(building.type);
