@@ -30,21 +30,15 @@ export default function Login() {
     switch (resp.status) {
       case 200: {
         await router.push('/');
+        return;
       }
 
-      case 401:
-        popupHook.setMessage('Invalid credential');
-        popupHook.setShowingState(true);
-        break;
-
-      case 500:
-        popupHook.setMessage('Internal server error. Please try again later.');
-        popupHook.setShowingState(true);
-        break;
-
       default:
-        popupHook.setMessage('Unknown error. Please try again later.');
+        const body = await resp.json();
+        popupHook.setMessage(body['message']);
+        popupHook.setCurrentVariant('warning');
         popupHook.setShowingState(true);
+        break;
     }
   };
 
@@ -72,7 +66,7 @@ export default function Login() {
           </Button>
         </div>
       </div>
-      <Popup variant={'warning'} popupHook={popupHook} />
+      <Popup popupHook={popupHook} />
     </form>
   );
 }

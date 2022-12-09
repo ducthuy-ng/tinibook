@@ -28,22 +28,13 @@ export const usePopup = (): PopupHook => {
   };
 };
 
-type Props = {
-  popupHook: PopupHook;
-  variant?: Variant;
-};
-
 const styleForVariant = {
   info: null,
   warning: styles.popup_warning,
   success: styles.popup_success,
 };
 
-function Popup(props: Props) {
-  useEffect(() => {
-    props.popupHook.setCurrentVariant(props.variant || 'info');
-  }, []);
-
+function Popup(props: { popupHook: PopupHook }) {
   return (
     <div
       onClick={() => {
