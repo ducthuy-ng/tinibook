@@ -53,7 +53,17 @@ export class StorageService {
 
   static async transferBook(bookId: string, fromBuildingId: string, toBuildingId: string, amount: number) {
     const startStoreItem = await StorageService.storageRepo.getStorageItem(bookId, fromBuildingId);
-    const destStoreItem = await StorageService.storageRepo.getStorageItem(bookId, toBuildingId);
+
+    let destStoreItem;
+    try {
+      destStoreItem = await StorageService.storageRepo.getStorageItem(bookId, toBuildingId);
+    } catch (e) {
+      if (e instanceof StorageItemNotFound) {
+        destStoreItem = new StorageItem(bookId, toBuildingId, 0);
+      } else {
+        throw e;
+      }
+    }
 
     startStoreItem.takeOut(amount);
     destStoreItem.addIn(amount);
