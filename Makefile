@@ -13,7 +13,7 @@ stop-dev:
 lint:
 	npx next lint
 
-lint-fix: npm audit fix --force
+lint-fix:
 	npx next lint --fix
 
 format:
