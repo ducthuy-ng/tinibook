@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { OrderedItem } from '../../../model/finance/domain/Receipt';
-import { InfraError, InvalidRole } from '../../../model/finance/domain/Exceptions';
-import { InvalidBuilding } from '../../../model/finance/domain/storage/Exceptions';
+import { OrderedItem } from '../../../../model/finance/domain/Receipt';
+import { InfraError, InvalidRole } from '../../../../model/finance/domain/Exceptions';
+import { InvalidBuilding } from '../../../../model/finance/domain/storage/Exceptions';
 import {
   saleReceiptService,
   sendInternalErrorResponse,
@@ -9,10 +9,10 @@ import {
   sendNotFoundResponse,
   sendSuccessResponse,
   sendUnauthorizedResponse,
-} from '../../../lib/api';
-import { getToken } from '../../../lib/jwt';
-import { Occupation } from '../../../model/identityaccess/domain/employee';
-import { query } from '../../../lib/postgres';
+} from '../../../../lib/api';
+import { getToken } from '../../../../lib/jwt';
+import { Occupation } from '../../../../model/identityaccess/domain/employee';
+import { query } from '../../../../lib/postgres';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {

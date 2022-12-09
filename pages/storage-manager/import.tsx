@@ -65,7 +65,6 @@ function StorageManagerImport(props: { token: TokenType }) {
   const isbnHook = useInputHook();
   const quantityHook = useInputHook();
 
-  // const payModalHook = useModal();
   const popupHook = usePopup();
   const rowsData = useRowsData();
 
@@ -73,40 +72,32 @@ function StorageManagerImport(props: { token: TokenType }) {
     const quantity = parseInt(quantityHook.value);
     if (!quantity) {
       popupHook.setMessage('Số lượng không hợp lệ');
+      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       quantityHook.changeValue('');
       return;
     }
 
-    const resp = await fetch(`/api/storage/books/${isbnHook.value}?show_location=true`);
+    const resp = await fetch(`/api/storage/books/${isbnHook.value}`);
 
     if (!resp.ok) {
-      popupHook.setMessage('Mã ISBN không hợp lệ');
-      popupHook.setShowingState(true);
-      isbnHook.changeValue('');
-      return;
+      switch (resp.status) {
+        case 404:
+          popupHook.setMessage('Đầu sách chưa được ghi nhận');
+          popupHook.setCurrentVariant('warning');
+          popupHook.setShowingState(true);
+          isbnHook.changeValue('');
+          return;
+        default:
+          popupHook.setMessage('Lỗi hệ thống. Xin thử lại sau');
+          popupHook.setCurrentVariant('warning');
+          popupHook.setShowingState(true);
+          isbnHook.changeValue('');
+          return;
+      }
     }
 
     const data = await resp.json();
-    const locationDetail = data['location'].find(
-      (location: { [x: string]: string }) => location['buildingId'] == props.token.assignedBuilding
-    );
-
-    // if (!locationDetail) {
-    //   popupHook.setMessage('Sách không còn tồn kho');
-    //   popupHook.setShowingState(true);
-    //   isbnHook.changeValue('');
-    //   quantityHook.changeValue('');
-    //   return;
-    // }
-    //
-    // if (locationDetail['amount'] < quantity || locationDetail['amount'] < quantity) {
-    //   popupHook.setMessage('Số lượng sách không đủ');
-    //   popupHook.setShowingState(true);
-    //   isbnHook.changeValue('');
-    //   quantityHook.changeValue('');
-    //   return;
-    // }
 
     let searchRowsData = rowsData.value.get(isbnHook.value);
     if (searchRowsData) {
@@ -124,6 +115,35 @@ function StorageManagerImport(props: { token: TokenType }) {
     rowsData.setValue(rowsData.value);
     quantityHook.changeValue('');
     isbnHook.changeValue('');
+  };
+
+  const sendCreateImportReceiptReq = async () => {
+    const resp = await fetch(`/api/finance/import-receipts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        items: Array.from(rowsData.value.values()).map((item) => {
+          return {
+            book_id: item.id,
+            amount: item.quantity,
+          };
+        }),
+      }),
+    });
+
+    if (!resp.ok) {
+      popupHook.setMessage('Lỗi hệ thống. Xin thử lại sau.');
+      popupHook.setCurrentVariant('warning');
+      popupHook.setShowingState(true);
+      return;
+    }
+
+    popupHook.setMessage('Ghi nhận thành công.');
+    popupHook.setCurrentVariant('success');
+    popupHook.setShowingState(true);
+    rowsData.setValue(new Map());
   };
 
   return (
@@ -178,16 +198,15 @@ function StorageManagerImport(props: { token: TokenType }) {
             Thêm
           </Button>
           <Button
-          // onClick={() => {
-          //   payModalHook.setDisplayState(true);
-          // }}
+            onClick={() => {
+              sendCreateImportReceiptReq();
+            }}
           >
-            Thanh toán
+            Tạo
           </Button>
-          {/*<PayModal rowsDataHook={rowsData} popupHook={popupHook} hook={payModalHook} />*/}
         </div>
       </div>
-      <Popup variant={'warning'} popupHook={popupHook} />;
+      <Popup popupHook={popupHook} />;
     </div>
   );
 }

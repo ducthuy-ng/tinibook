@@ -118,6 +118,11 @@ import { getToken } from '../../lib/jwt';
 import { SpecificLocationFuzzySearchResult } from '../api/storage/books/at-building/[building-id]';
 import { ParsedUrlQuery } from 'querystring';
 import StorageManagerSidebar from '../../components/Sidebar/Specifics/StorageManagerSidebar';
+import BookTransferModal, {
+  BookTransferHook,
+  useBookTransfer,
+} from '../../components/Modal/BookTransferModal/BookTransferModal';
+import Popup, { usePopup } from '../../components/Popup/Popup';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const redirect = checkRBACRedirect(ctx, Occupation.STORAGE_MANAGER);
@@ -142,27 +147,34 @@ const StorageManager = (props: { token: TokenType; query: ParsedUrlQuery }) => {
   const searchBookName = useInputHook(bookName);
   const paging = usePagination();
 
-  return (
-    <form className={styles.container}>
-      <HeaderWithSidebar hook={headerHook} sidebar={StorageManagerSidebar} token={props.token} />
+  const popupHook = usePopup();
+  const bookTransferHook = useBookTransfer();
 
-      <div className={styles.title_row}>
-        <h1 className={styles.title}>Sách tồn kho {props.token.assignedBuilding}</h1>
-        <Searchbar name={'book_name'} placeholder={'Nhập tên sách cần tìm...'} inputHook={searchBookName} />
-        <input type={'submit'} hidden={true} />
-      </div>
-      <BookDisplay token={props.token} bookName={bookName} page={paging.page} />
-      <Pagination
-        paginationHook={paging}
-        maxPageUrl={`/api/storage/books/at-building/${props.token.assignedBuilding}?book_name=${encodeURIComponent(
-          bookName
-        )}&maxPage=true`}
-      />
-    </form>
+  return (
+    <>
+      <form className={styles.container}>
+        <HeaderWithSidebar hook={headerHook} sidebar={StorageManagerSidebar} token={props.token} />
+
+        <div className={styles.title_row}>
+          <h1 className={styles.title}>Sách tồn kho {props.token.assignedBuilding}</h1>
+          <Searchbar name={'book_name'} placeholder={'Nhập tên sách cần tìm...'} inputHook={searchBookName} />
+          <input type={'submit'} hidden={true} />
+        </div>
+        <BookDisplay token={props.token} bookName={bookName} page={paging.page} bookTransferHook={bookTransferHook} />
+        <Pagination
+          paginationHook={paging}
+          maxPageUrl={`/api/storage/books/at-building/${props.token.assignedBuilding}?book_name=${encodeURIComponent(
+            bookName
+          )}&maxPage=true`}
+        />
+      </form>
+      <BookTransferModal hook={bookTransferHook} currentBuilding={props.token.assignedBuilding} popupHook={popupHook} />
+      <Popup popupHook={popupHook} />
+    </>
   );
 };
 
-function BookDisplay(props: { token: TokenType; bookName: string; page: number }) {
+function BookDisplay(props: { token: TokenType; bookName: string; page: number; bookTransferHook: BookTransferHook }) {
   const itemLimitPerPage = 10;
 
   const { data, error } = useSWR(
@@ -178,7 +190,17 @@ function BookDisplay(props: { token: TokenType; bookName: string; page: number }
   return (
     <div className={styles.contents}>
       {(data as SpecificLocationFuzzySearchResult[]).map((book) => (
-        <BookCard key={book.id} id={book.id} name={book.name} coverUrl={book.coverUrl} amount={book.amount} />
+        <BookCard
+          key={book.id}
+          id={book.id}
+          name={book.name}
+          coverUrl={book.coverUrl}
+          amount={book.amount}
+          onClick={() => {
+            props.bookTransferHook.modalHook.setDisplayState(true);
+            props.bookTransferHook.setSelectedISBN(book['isbn']);
+          }}
+        />
       ))}
     </div>
   );

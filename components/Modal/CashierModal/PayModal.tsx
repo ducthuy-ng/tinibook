@@ -100,7 +100,7 @@ export default function PayModal(props: { hook: ModalHook; popupHook: PopupHook;
         </div>
       </div>
 
-      <Popup variant={'warning'} popupHook={props.popupHook} />
+      <Popup popupHook={props.popupHook} />
     </Modal>
   );
 }

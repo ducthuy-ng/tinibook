@@ -62,6 +62,7 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
     const quantity = parseInt(quantityHook.value);
     if (!quantity) {
       popupHook.setMessage('Số lượng không hợp lệ');
+      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       quantityHook.changeValue('');
       return;
@@ -71,6 +72,7 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
 
     if (!resp.ok) {
       popupHook.setMessage('Mã ISBN không hợp lệ');
+      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       isbnHook.changeValue('');
       return;
@@ -83,6 +85,7 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
 
     if (!locationDetail) {
       popupHook.setMessage('Sách không còn tồn kho');
+      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       isbnHook.changeValue('');
       quantityHook.changeValue('');
@@ -91,6 +94,7 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
 
     if (locationDetail['amount'] < quantity || locationDetail['amount'] < quantity) {
       popupHook.setMessage('Số lượng sách không đủ');
+      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       isbnHook.changeValue('');
       quantityHook.changeValue('');
@@ -180,7 +184,7 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
           <PayModal rowsDataHook={rowsData} popupHook={popupHook} hook={payModalHook} />
         </div>
       </div>
-      <Popup variant={'warning'} popupHook={popupHook} />;
+      <Popup popupHook={popupHook} />;
     </div>
   );
 }
