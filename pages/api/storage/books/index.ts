@@ -37,9 +37,9 @@ async function addBook(req: NextApiRequest, res: NextApiResponse) {
     req.body['isbn'],
     req.body['name'],
     req.body['type'],
-    req.body['isbn'],
-    req.body['name'],
-    req.body['name'],
+    req.body['author'],
+    req.body['coverUrl'],
+    req.body['publisher'],
     pagesNum,
     price
   );
