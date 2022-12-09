@@ -73,6 +73,7 @@ function StorageManagerImport(props: { token: TokenType }) {
     const quantity = parseInt(quantityHook.value);
     if (!quantity) {
       popupHook.setMessage('Số lượng không hợp lệ');
+      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       quantityHook.changeValue('');
       return;
@@ -82,6 +83,7 @@ function StorageManagerImport(props: { token: TokenType }) {
 
     if (!resp.ok) {
       popupHook.setMessage('Mã ISBN không hợp lệ');
+      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       isbnHook.changeValue('');
       return;
@@ -187,7 +189,7 @@ function StorageManagerImport(props: { token: TokenType }) {
           {/*<PayModal rowsDataHook={rowsData} popupHook={popupHook} hook={payModalHook} />*/}
         </div>
       </div>
-      <Popup variant={'warning'} popupHook={popupHook} />;
+      <Popup popupHook={popupHook} />;
     </div>
   );
 }

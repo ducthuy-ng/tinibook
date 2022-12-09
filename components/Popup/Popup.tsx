@@ -1,40 +1,40 @@
 import styles from './Popup.module.css';
 import classNames from 'classnames';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+
+type Variant = 'info' | 'success' | 'warning';
 
 export type PopupHook = {
   message: string;
   setMessage: Dispatch<SetStateAction<string>>;
   isShowing: boolean;
   setShowingState: Dispatch<SetStateAction<boolean>>;
+  currentVariant: Variant;
+  setCurrentVariant: Dispatch<SetStateAction<Variant>>;
 };
 
 export const usePopup = (): PopupHook => {
   const [message, setMessage] = useState('');
   const [isShowing, setShowingState] = useState(false);
+  const [currentVariant, setCurrentVariant] = useState<Variant>('info');
 
   return {
     message,
     setMessage,
     isShowing,
     setShowingState,
+    currentVariant,
+    setCurrentVariant,
   };
-};
-
-type Props = {
-  popupHook: PopupHook;
-  variant?: 'info' | 'success' | 'warning';
 };
 
 const styleForVariant = {
   info: null,
   warning: styles.popup_warning,
-  success: null,
+  success: styles.popup_success,
 };
 
-function Popup(props: Props) {
-  let variant = props.variant || 'info';
-
+function Popup(props: { popupHook: PopupHook }) {
   return (
     <div
       onClick={() => {
@@ -42,7 +42,7 @@ function Popup(props: Props) {
       }}
       className={classNames(
         styles.popup,
-        styleForVariant[variant],
+        styleForVariant[props.popupHook.currentVariant],
         props.popupHook.isShowing ? styles.popup_show : styles.popup_hide
       )}
     >

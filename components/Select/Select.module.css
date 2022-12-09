@@ -1,7 +1,11 @@
-.select_container {
-  display: flex;
-  align-items: center;
+.select_wrapper {
+  position: relative;
 
+  width: fit-content;
+  height: fit-content;
+}
+
+.select {
   appearance: none;
 
   padding: 10px;
@@ -16,22 +20,12 @@
   font-size: 18px;
 }
 
-.select_container:hover {
-  cursor: pointer;
-}
-
-.select {
-  appearance: none;
-  border: none;
-
-  flex-grow: 1;
-  font-size: 20px;
-}
-
-.select:hover {
-  cursor: pointer;
-}
-
 .select:focus {
-  outline: none;
+  border: 1px solid dodgerblue;
+}
+
+.select_icon {
+  position: absolute;
+  right: 0;
+  height: 100%;
 }

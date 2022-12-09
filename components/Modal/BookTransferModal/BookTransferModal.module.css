@@ -1,0 +1,21 @@
+.row_detail {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.row_detail_content {
+  font-style: italic;
+  max-width: 15ch;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
