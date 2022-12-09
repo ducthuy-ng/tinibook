@@ -14,8 +14,6 @@ import { getToken } from '../../../../lib/jwt';
 import { Occupation } from '../../../../model/identityaccess/domain/employee';
 import { query } from '../../../../lib/postgres';
 
-
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'POST':
