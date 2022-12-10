@@ -31,7 +31,7 @@ type InputRow = {
   isbn: string;
   name: string;
   quantity: number;
-  book_price : number ;
+  book_price: number;
   price: number;
 };
 
@@ -40,11 +40,19 @@ export type RowsDataType = Map<string, InputRow>;
 export type RowsDataHook = {
   value: RowsDataType;
   setValue: Dispatch<SetStateAction<RowsDataType>>;
+  deleteItem: (key: string) => void;
 };
 
 const useRowsData = (): RowsDataHook => {
   const [value, setValue] = useState<RowsDataType>(new Map());
-  return { value, setValue };
+
+  function deleteItem(key: string) {
+    const newValue = new Map(value);
+    newValue.delete(key);
+    setValue(newValue);
+  }
+
+  return { value, setValue, deleteItem };
 };
 
 function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
@@ -121,7 +129,6 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
     isbnHook.changeValue('');
   };
 
-
   return (
     <div>
       <div className={cashierStyles.container}>
@@ -149,7 +156,7 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
             </tr>
           </thead>
           <tbody>
-            <TableRows books={rowsData.value} />
+            <TableRows books={rowsData.value} deleteFn={rowsData.deleteItem} />
           </tbody>
         </Table>
       </div>
@@ -189,17 +196,17 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
   );
 }
 
-function TableRows(props: { books: RowsDataType }) {
+function TableRows(props: { books: RowsDataType; deleteFn: (key: string) => void }) {
   return (
     <>
       {Array.from(props.books.values()).map((row, index) => (
-        <Row key={index} index={index + 1} rowItem={row} />
+        <Row key={index} index={index + 1} rowItem={row} deleteFn={props.deleteFn} />
       ))}
     </>
   );
 }
 
-function Row(props: { index: number; rowItem: InputRow }) {
+function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) => void }) {
   return (
     <tr>
       <td className={cashierStyles.tdItem}>{props.index}</td>
@@ -208,7 +215,9 @@ function Row(props: { index: number; rowItem: InputRow }) {
       <td className={cashierStyles.tdItem}>{props.rowItem.quantity}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.book_price}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.price}</td>
-      <td className={cashierStyles.tdItem}> <DeleteIcon></DeleteIcon></td>
+      <td className={cashierStyles.tdItem}>
+        <DeleteIcon onClick={() => props.deleteFn(props.rowItem.isbn)}></DeleteIcon>
+      </td>
     </tr>
   );
 }
