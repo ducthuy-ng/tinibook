@@ -29,7 +29,7 @@ async function addBook(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const pagesNum = parseInt(req.body['pagesNum']);
-  if (!price) {
+  if (!pagesNum) {
     return sendInvalidQueryResponse(res, 'Số trang sách không hợp lệ', 'Page num must be a number');
   }
 
