@@ -9,33 +9,60 @@ import { useRouter } from 'next/router';
 import { fetcher } from '../../lib/swr';
 import { GetServerSideProps } from 'next';
 import Button from '../../components/Button/Button';
+import { getToken } from '../../lib/jwt';
+import { TokenType } from '../../model/identityaccess/authService';
+import { ParsedUrlQuery } from 'querystring';
+import { Occupation } from '../../model/identityaccess/domain/employee';
+import AccountantSidebar from '../../components/Sidebar/Specifics/AccountantSidebar';
+import ShopManagementSidebar from '../../components/Sidebar/Specifics/ShopManagerSidebar';
+import StorageManagerSidebar from '../../components/Sidebar/Specifics/StorageManagerSidebar';
+import HeaderWithSidebar, { useHeaderWithSidebarHook } from '../../components/HeaderWithSidebar/HeaderWithSidebar';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { isbn } = context.query;
-
   if (!isbn)
     return {
       redirect: {
-        destination: '/',
+        destination: '/search-book',
         permanent: false,
       },
     };
 
+  const token = getToken(context);
   return {
-    props: {},
+    props: {
+      token: token,
+      query: context.query,
+    },
   };
 };
 
-const BookDetail = () => {
+const selectHeaderForOccupation: Map<Occupation, any> = new Map([
+  [Occupation.STAFF, AccountantSidebar],
+  [Occupation.SHOP_MANAGER, ShopManagementSidebar],
+  [Occupation.STORAGE_MANAGER, StorageManagerSidebar],
+  [Occupation.ACCOUNTANT, AccountantSidebar],
+]);
+
+const BookDetail = (props: { token?: TokenType; query: ParsedUrlQuery }) => {
+  const header = useHeaderWithSidebarHook();
   return (
     <>
-      <HeaderCustomer />
-      <BookInfo />
+      {props.token ? (
+        <HeaderWithSidebar
+          token={props.token}
+          hook={header}
+          sidebar={selectHeaderForOccupation.get(props.token.occupation)}
+        />
+      ) : (
+        <HeaderCustomer />
+      )}
+      <BookInfo token={props.token} />
     </>
   );
 };
 
-function BookInfo() {
+function BookInfo(props: { token?: TokenType }) {
   const router = useRouter();
   let { isbn } = router.query;
 
@@ -46,16 +73,6 @@ function BookInfo() {
 
   return (
     <div className={classNames(styles.container, moduleStyles.container)}>
-      <div className={classNames(styles.row)}>
-        <Button
-          onClick={() => {
-            router.back();
-          }}
-        >
-          Quay lại
-        </Button>
-      </div>
-
       <div className={classNames(styles.row)}>
         <h1>Vị trí lưu trữ</h1>
       </div>
@@ -103,6 +120,18 @@ function BookInfo() {
           ))}
         </tbody>
       </table>
+
+      <div className={classNames(styles.row)}>
+        <Button
+          onClick={() => {
+            router.back();
+          }}
+        >
+          Quay lại
+        </Button>
+        {props.token?.occupation == Occupation.STORAGE_MANAGER ? <Button>Cập nhật</Button> : null}
+        {/*{props.token?.occupation == Occupation.STORAGE_MANAGER ? <Button>Xoá</Button> : null}*/}
+      </div>
     </div>
   );
 }
