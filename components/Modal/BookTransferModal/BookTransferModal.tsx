@@ -8,7 +8,7 @@ import Input, { useInputHook } from '../../Input/Input';
 import Select, { useSelect } from '../../Select/Select';
 import { Building } from '../../../model/bookMngt/domain/Building';
 import { cursorTo } from 'readline';
-import useSWR from 'swr';
+import useSWR, { KeyedMutator } from 'swr';
 import { fetcher } from '../../../lib/swr';
 import Button from '../../Button/Button';
 import { PopupHook } from '../../Popup/Popup';
@@ -25,7 +25,12 @@ export function useBookTransfer(): BookTransferHook {
   return { modalHook, selectedISBN: selectedISBN, setSelectedISBN: setSelectedISBN };
 }
 
-const BookTransferModal = (props: { hook: BookTransferHook; currentBuilding: string; popupHook: PopupHook }) => {
+const BookTransferModal = (props: {
+  hook: BookTransferHook;
+  currentBuilding: string;
+  popupHook: PopupHook;
+  mutateFn?: KeyedMutator<any>;
+}) => {
   const [bookDetail, setBookDetail] = useState<BookSearchType | null>(null);
 
   useEffect(() => {
@@ -51,6 +56,7 @@ const BookTransferModal = (props: { hook: BookTransferHook; currentBuilding: str
           bookDetail={bookDetail}
           currentBuilding={props.currentBuilding}
           popupHook={props.popupHook}
+          mutateFn={props.mutateFn}
         />
       ) : (
         <div className={styles.row}>Lỗi hệ thống</div>
@@ -64,6 +70,7 @@ function TransferForm(props: {
   bookDetail: BookSearchType;
   currentBuilding: string;
   popupHook: PopupHook;
+  mutateFn?: KeyedMutator<any>;
 }) {
   const { data } = useSWR<Building[]>(`/api/storage/buildings`, fetcher);
 
@@ -98,6 +105,7 @@ function TransferForm(props: {
         props.popupHook.setCurrentVariant('success');
         props.popupHook.setMessage('Ghi nhận thành công');
         props.popupHook.setShowingState(true);
+        if (props.mutateFn) props.mutateFn();
         return;
       default:
         const body = await res.json();
