@@ -12,7 +12,6 @@ import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
 import HeaderWithSidebar, { useHeaderWithSidebarHook } from '../../components/HeaderWithSidebar/HeaderWithSidebar';
 import ShopManagementSidebar from '../../components/Sidebar/Specifics/ShopManagerSidebar';
-// import { RowsDataHook, RowsDataType } from '../../pages/cashier';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -25,6 +24,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
+
 type InputRow = {
   id: string;
   isbn: string;
@@ -47,6 +47,7 @@ export type RowsDataHook = {
 const useRowsData = (): RowsDataHook => {
   const [value, setValue] = useState<RowsDataType>(new Map());
   const [totalCost, setTotalCost] = useState(0);
+
   function deleteItem(key: string) {
     const newValue = new Map(value);
     newValue.delete(key);
@@ -73,7 +74,6 @@ function ShopManagerImport(props: { token: TokenType }) {
   const isbnHook = useInputHook();
   const quantityHook = useInputHook();
 
-  // const payModalHook = useModal();
   const popupHook = usePopup();
   const rowsData = useRowsData();
   const addTableRows = async () => {
@@ -96,10 +96,6 @@ function ShopManagerImport(props: { token: TokenType }) {
     }
 
     const data = await resp.json();
-    const locationDetail = data['location'].find(
-      (location: { [x: string]: string }) => location['buildingId'] == props.token.assignedBuilding
-    );
-
     let searchRowsData = rowsData.value.get(isbnHook.value);
     if (searchRowsData) {
       searchRowsData.quantity += quantity;
@@ -142,7 +138,7 @@ function ShopManagerImport(props: { token: TokenType }) {
               <th>ISBN</th>
               <th>Tên sách</th>
               <th>Số lượng</th>
-              <th> Đơn giá </th>
+              <th> Đơn giá</th>
               <th>Thành tiền</th>
               <th></th>
             </tr>

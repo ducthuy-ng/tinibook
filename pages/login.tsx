@@ -5,7 +5,6 @@ import LoginStyles from '../styles/login.module.css';
 import Popup, { usePopup } from '../components/Popup/Popup';
 import { FormEvent } from 'react';
 import { useRouter } from 'next/router';
-import { parseCookies } from 'nookies';
 
 export default function Login() {
   const popupHook = usePopup();

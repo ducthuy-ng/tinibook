@@ -4,7 +4,6 @@ import React from 'react';
 import styles from '../../styles/SearchBook.module.css';
 import { GetServerSideProps } from 'next';
 import { Occupation } from '../../model/identityaccess/domain/employee';
-import { useRouter } from 'next/router';
 import { useInputHook } from '../../components/Input/Input';
 import Pagination, { usePagination } from '../../components/Pagination/Pagination';
 import Searchbar from '../../components/Searchbar/Searchbar';
