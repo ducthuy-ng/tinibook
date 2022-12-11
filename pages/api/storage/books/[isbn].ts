@@ -19,6 +19,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (Array.isArray(isbn)) isbn = isbn[0];
 
+  switch (req.method) {
+    case 'GET':
+      return getBook(isbn, req, res);
+    default:
+      return sendNotFoundResponse(res);
+  }
+}
+
+async function getBook(isbn: string, req: NextApiRequest, res: NextApiResponse) {
   let showLocation = !!req.query['show_location'];
 
   try {
