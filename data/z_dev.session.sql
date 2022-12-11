@@ -116,4 +116,59 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- select * from getbookinreceipt('d303bace-754a-4072-8874-6a7ce9d131e6'); 
+
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION get_revenue_in_month(_year varchar, _month varchar)
+    RETURNS TABLE
+            (
+                revenue numeric
+            )
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT sum(price) AS revenue
+        FROM sale_receipt
+        WHERE extract(month from createddate) = _month::numeric
+          AND extract(year from createddate) = _year::numeric;
+END
+$$
+    LANGUAGE plpgsql;
+
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION get_receipts_of_time(_year VARCHAR, _month VARCHAR)
+    RETURNS SETOF sale_receipt
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT *
+        FROM sale_receipt
+        WHERE extract(month FROM createddate) = _month::NUMERIC
+          AND extract(year FROM createddate) = _year::NUMERIC;
+END
+$$
+    LANGUAGE plpgsql;
+
+create or replace function category_statistic(_year VARCHAR, _month VARCHAR)
+    returns table
+            (
+                book_type varchar,
+                quantity  numeric
+            )
+as
+$$
+begin
+    return query
+        SELECT type as book_type, SUM(amount::numeric) as quantity
+        FROM (SELECT json_array_elements(items) ->> 'book_id' AS item, json_array_elements(items) ->> 'amount' AS amount
+              FROM get_receipts_of_time(_year, _month)) AS receipt_items
+                 LEFT JOIN book ON item = book.id
+        GROUP BY type;
+end
+$$
+    language plpgsql;
