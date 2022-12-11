@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS Import_receipt
     CreatedDate       timestamp,
     CreatedEmployeeId INT,
     Cost              DECIMAL(10, 2),
-    Items             TEXT
+    Items             json
 
 );
 

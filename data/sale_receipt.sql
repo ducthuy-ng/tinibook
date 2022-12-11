@@ -4,7 +4,7 @@ CREATE TABLE Sale_receipt
     CreatedDate       timestamp,
     CreatedEmployeeId INT,
     Price             DECIMAL(10, 2) DEFAULT 0,
-    Items             TEXT
+    Items             json
 );
 --
 INSERT INTO Sale_receipt (Id, CreatedDate, CreatedEmployeeId, Price, Items)
