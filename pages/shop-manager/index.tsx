@@ -1,5 +1,5 @@
 import { checkRBACRedirect } from '../../lib/redirect';
-import useSWR from 'swr';
+import useSWR, { SWRResponse } from 'swr';
 import React from 'react';
 import styles from '../../styles/SearchBook.module.css';
 import { GetServerSideProps } from 'next';
@@ -37,6 +37,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
+const itemLimitPerPage = 10;
+
 const ShopManager = (props: { token: TokenType; query: ParsedUrlQuery }) => {
   let bookName = props.query['book_name'] || '';
   if (Array.isArray(bookName)) bookName = bookName[0];
@@ -49,6 +51,13 @@ const ShopManager = (props: { token: TokenType; query: ParsedUrlQuery }) => {
   const bookTransferHook = useBookTransfer();
   const popupHook = usePopup();
 
+  const bookData = useSWR<SpecificLocationFuzzySearchResult[]>(
+    `/api/storage/books/at-building/${props.token.assignedBuilding}?book_name=${encodeURIComponent(bookName)}&page=${
+      paging.page
+    }&limit=${itemLimitPerPage}`,
+    fetcher
+  );
+
   return (
     <>
       <form className={styles.container}>
@@ -59,7 +68,7 @@ const ShopManager = (props: { token: TokenType; query: ParsedUrlQuery }) => {
           <Searchbar name={'book_name'} placeholder={'Nhập tên sách cần tìm...'} inputHook={searchBookName} />
           <input type={'submit'} hidden={true} />
         </div>
-        <BookDisplay token={props.token} bookName={bookName} page={paging.page} bookTransferHook={bookTransferHook} />
+        <BookDisplay token={props.token} bookData={bookData} bookTransferHook={bookTransferHook} />
         <Pagination
           paginationHook={paging}
           maxPageUrl={`/api/storage/books/at-building/${props.token.assignedBuilding}?book_name=${encodeURIComponent(
@@ -67,28 +76,28 @@ const ShopManager = (props: { token: TokenType; query: ParsedUrlQuery }) => {
           )}&maxPage=true`}
         />
       </form>
-      <BookTransferModal hook={bookTransferHook} currentBuilding={props.token.assignedBuilding} popupHook={popupHook} />
+      <BookTransferModal
+        hook={bookTransferHook}
+        currentBuilding={props.token.assignedBuilding}
+        popupHook={popupHook}
+        mutateFn={bookData.mutate}
+      />
       <Popup popupHook={popupHook} />
     </>
   );
 };
 
-function BookDisplay(props: { token: TokenType; bookName: string; page: number; bookTransferHook: BookTransferHook }) {
-  const itemLimitPerPage = 10;
-
-  const { data, error } = useSWR(
-    `/api/storage/books/at-building/${props.token.assignedBuilding}?book_name=${encodeURIComponent(
-      props.bookName
-    )}&page=${props.page}&limit=${itemLimitPerPage}`,
-    fetcher
-  );
-
-  if (error) return <div className={styles.contents}>Lỗi kết nối đến hệ thống</div>;
-  if (!data) return <div className={styles.contents}>Đang tải...</div>;
+function BookDisplay(props: {
+  token: TokenType;
+  bookData: SWRResponse<SpecificLocationFuzzySearchResult[]>;
+  bookTransferHook: BookTransferHook;
+}) {
+  if (props.bookData.error) return <div className={styles.contents}>Lỗi kết nối đến hệ thống</div>;
+  if (!props.bookData.data) return <div className={styles.contents}>Đang tải...</div>;
 
   return (
     <div className={styles.contents}>
-      {(data as SpecificLocationFuzzySearchResult[]).map((book) => (
+      {props.bookData.data.map((book) => (
         <BookCard
           key={book['id']}
           id={book['id']}
