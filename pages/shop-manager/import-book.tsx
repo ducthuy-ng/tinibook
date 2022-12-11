@@ -103,12 +103,12 @@ function ShopManagerImport(props: { token: TokenType }) {
     let searchRowsData = rowsData.value.get(isbnHook.value);
     if (searchRowsData) {
       searchRowsData.quantity += quantity;
-      searchRowsData.price += searchRowsData.book_price * quantity
+      searchRowsData.price += searchRowsData.book_price * quantity;
     } else {
       rowsData.value.set(isbnHook.value, {
         id: data.id,
         isbn: isbnHook.value,
-        name: data.name,  
+        name: data.name,
         quantity: quantity,
         book_price: parseInt(data.price),
         price: data.price * quantity,
@@ -148,7 +148,7 @@ function ShopManagerImport(props: { token: TokenType }) {
             </tr>
           </thead>
           <tbody>
-            <TableRows books={rowsData.value}  deleteFn={rowsData.deleteItem} />
+            <TableRows books={rowsData.value} deleteFn={rowsData.deleteItem} />
           </tbody>
         </Table>
       </div>
@@ -216,7 +216,7 @@ function TableRows(props: { books: RowsDataType; deleteFn: (key: string) => void
   );
 }
 
-function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) => void}) {
+function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) => void }) {
   return (
     <tr>
       <td className={cashierStyles.tdItem}>{props.index}</td>
