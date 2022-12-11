@@ -4,7 +4,8 @@ import {
   bookRepo,
   sendInternalErrorResponse,
   sendInvalidQueryResponse,
-  sendNotFoundResponse, sendSuccessResponse,
+  sendNotFoundResponse,
+  sendSuccessResponse,
   storageRepo,
 } from '../../../../lib/api';
 import { LocationView } from '../../../../model/bookMngt/domain/StorageItem';
@@ -63,7 +64,7 @@ async function updateBook(isbn: string, req: NextApiRequest, res: NextApiRespons
     book.publisher = req.body.publisher;
     book.pagesNum = req.body.pagesNum;
     await bookRepo.save(book);
-    return sendSuccessResponse(res)
+    return sendSuccessResponse(res);
   } catch (e) {
     if (e instanceof BookNotFound) return sendNotFoundResponse(res);
 
