@@ -14,6 +14,7 @@ import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
 import { ParsedUrlQuery } from 'querystring';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Header, { HeaderCashier } from '../../components/Header/Header';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = checkRBACRedirect(context, Occupation.STAFF);
@@ -131,6 +132,7 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
 
   return (
     <div>
+      <HeaderCashier token={props.token} />
       <div className={cashierStyles.container}>
         <div className={classNames(cashierStyles.row, cashierStyles.row_input)}>
           <h1>Tạo hoá đơn</h1>

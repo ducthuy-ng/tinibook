@@ -90,4 +90,27 @@ function UserDropdown(props: { hook: DropdownHook; token: TokenType }) {
   );
 }
 
+export function HeaderCashier(props: { token: TokenType }) {
+  const dropdownHook = useDropdownHook();
+
+  return (
+    <header className={styles.header}>
+      <></>
+      <div className={styles.header_logo_wrapper}>
+        <Image className={styles.header_logo} src={logo} alt="logo" fill={true} />
+      </div>
+      <div
+        className={styles.user_info}
+        onClick={() => {
+          dropdownHook.setShowingState(!dropdownHook.isShowing);
+        }}
+      >
+        <AccountBox className={styles.avatar} />
+        <div className={styles.user_name}>{props.token.employeeName}</div>
+        <UserDropdown hook={dropdownHook} token={props.token} />
+      </div>
+    </header>
+  );
+}
+
 export default Header;
