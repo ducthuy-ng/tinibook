@@ -18,6 +18,7 @@ import HeaderCustomer from '../../components/Header/HeaderCustomer';
 import { ParsedUrlQuery } from 'querystring';
 import { GetServerSideProps } from 'next';
 import { getToken } from '../../lib/jwt';
+import Button from '../../components/Button/Button';
 
 const selectHeaderForOccupation: Map<Occupation, any> = new Map([
   [Occupation.STAFF, AccountantSidebar],
@@ -43,6 +44,7 @@ const SearchBook = (props: { token?: TokenType; query?: ParsedUrlQuery }) => {
   const searchBookName = useInputHook(bookName);
   const paging = usePagination();
   const sidebarHook = useHeaderWithSidebarHook();
+  const router = useRouter();
 
   return (
     <div className={styles.container}>
@@ -58,6 +60,11 @@ const SearchBook = (props: { token?: TokenType; query?: ParsedUrlQuery }) => {
       <form className={styles.title_row}>
         <h1 className={styles.title}>Sách</h1>
         <Searchbar name={'book_name'} placeholder={'Nhập tên sách cần tìm...'} inputHook={searchBookName} />
+        {props.token?.occupation == Occupation.STORAGE_MANAGER ? (
+          <Button type={'button'} onClick={() => router.push('/search-book/add')}>
+            Tạo sách
+          </Button>
+        ) : null}
         <input type={'submit'} hidden={true} />
       </form>
       <BookDisplay bookName={bookName} page={paging.page} />

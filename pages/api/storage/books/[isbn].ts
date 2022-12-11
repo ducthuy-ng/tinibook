@@ -5,6 +5,7 @@ import {
   sendInternalErrorResponse,
   sendInvalidQueryResponse,
   sendNotFoundResponse,
+  sendSuccessResponse,
   storageRepo,
 } from '../../../../lib/api';
 import { LocationView } from '../../../../model/bookMngt/domain/StorageItem';
@@ -19,6 +20,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (Array.isArray(isbn)) isbn = isbn[0];
 
+  switch (req.method) {
+    case 'GET':
+      return getBook(isbn, req, res);
+    case 'PUT':
+      return updateBook(isbn, req, res);
+    default:
+      return sendNotFoundResponse(res);
+  }
+}
+
+async function getBook(isbn: string, req: NextApiRequest, res: NextApiResponse) {
   let showLocation = !!req.query['show_location'];
 
   try {
@@ -39,5 +51,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.error(err);
     return sendInternalErrorResponse(res);
+  }
+}
+
+async function updateBook(isbn: string, req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const book = await bookRepo.getByISBN(isbn);
+
+    book.type = req.body.type;
+    book.author = req.body.author;
+    book.coverUrl = req.body.coverUrl;
+    book.publisher = req.body.publisher;
+    book.pagesNum = req.body.pagesNum;
+    await bookRepo.save(book);
+    return sendSuccessResponse(res);
+  } catch (e) {
+    if (e instanceof BookNotFound) return sendNotFoundResponse(res);
+
+    console.error(e);
+    sendInternalErrorResponse(res);
   }
 }
