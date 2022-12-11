@@ -74,7 +74,7 @@ function ShopManagerImport(props: { token: TokenType }) {
       popupHook.setMessage('Số lượng không hợp lệ');
       popupHook.setShowingState(true);
       quantityHook.changeValue('');
-      
+
       return;
     }
 
@@ -122,7 +122,7 @@ function ShopManagerImport(props: { token: TokenType }) {
             Ngày tạo:
           </label>
           <p>{date}</p>
-        </div>  
+        </div>
       </div>
       <div className={cashierStyles.scroll}>
         <Table>
@@ -170,7 +170,7 @@ function ShopManagerImport(props: { token: TokenType }) {
                 },
                 body: JSON.stringify({
                   items: Array.from(rowsData.value.values()).map((item) => {
-                    console.log(item) ;
+                    console.log(item);
                     return {
                       book_id: item.id,
                       amount: item.quantity,
@@ -185,11 +185,11 @@ function ShopManagerImport(props: { token: TokenType }) {
               rowsData.setValue(new Map());
             }}
           >
-          Tạo
+            Tạo
           </Button>
         </div>
       </div>
-      <Popup variant={'warning'} popupHook={popupHook} />;
+      <Popup popupHook={popupHook} />;
     </div>
   );
 }
@@ -216,5 +216,4 @@ function Row(props: { index: number; rowItem: InputRow }) {
   );
 }
 
-export default ShopManagerImport
-;
+export default ShopManagerImport;
