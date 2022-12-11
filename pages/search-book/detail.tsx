@@ -129,7 +129,9 @@ function BookInfo(props: { token?: TokenType }) {
         >
           Quay lại
         </Button>
-        {props.token?.occupation == Occupation.STORAGE_MANAGER ? <Button>Cập nhật</Button> : null}
+        {props.token?.occupation == Occupation.STORAGE_MANAGER ? (
+          <Button onClick={() => router.push(`/search-book/update?isbn=${isbn}`)}>Cập nhật</Button>
+        ) : null}
         {/*{props.token?.occupation == Occupation.STORAGE_MANAGER ? <Button>Xoá</Button> : null}*/}
       </div>
     </div>
