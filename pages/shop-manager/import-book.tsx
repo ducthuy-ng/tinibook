@@ -12,7 +12,7 @@ import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
 import HeaderWithSidebar, { useHeaderWithSidebarHook } from '../../components/HeaderWithSidebar/HeaderWithSidebar';
 import ShopManagementSidebar from '../../components/Sidebar/Specifics/ShopManagerSidebar';
-// import { RowsDataHook, RowsDataType } from '../../pages/cashier';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = checkRBACRedirect(context, Occupation.SHOP_MANAGER);
@@ -24,11 +24,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
+
 type InputRow = {
   id: string;
   isbn: string;
   name: string;
   quantity: number;
+  book_price: number;
   price: number;
 };
 
@@ -39,11 +41,18 @@ export type RowsDataHook = {
   setValue: Dispatch<SetStateAction<RowsDataType>>;
   totalCost: number;
   setTotalCost: Dispatch<SetStateAction<number>>;
+  deleteItem: (key: string) => void;
 };
 
 const useRowsData = (): RowsDataHook => {
   const [value, setValue] = useState<RowsDataType>(new Map());
   const [totalCost, setTotalCost] = useState(0);
+
+  function deleteItem(key: string) {
+    const newValue = new Map(value);
+    newValue.delete(key);
+    setValue(newValue);
+  }
 
   useEffect(() => {
     setTotalCost(
@@ -54,7 +63,7 @@ const useRowsData = (): RowsDataHook => {
     );
   }, [value]);
 
-  return { value, setValue, totalCost, setTotalCost };
+  return { value, setValue, totalCost, setTotalCost, deleteItem };
 };
 
 function ShopManagerImport(props: { token: TokenType }) {
@@ -65,7 +74,6 @@ function ShopManagerImport(props: { token: TokenType }) {
   const isbnHook = useInputHook();
   const quantityHook = useInputHook();
 
-  // const payModalHook = useModal();
   const popupHook = usePopup();
   const rowsData = useRowsData();
   const addTableRows = async () => {
@@ -88,19 +96,17 @@ function ShopManagerImport(props: { token: TokenType }) {
     }
 
     const data = await resp.json();
-    const locationDetail = data['location'].find(
-      (location: { [x: string]: string }) => location['buildingId'] == props.token.assignedBuilding
-    );
-
     let searchRowsData = rowsData.value.get(isbnHook.value);
     if (searchRowsData) {
       searchRowsData.quantity += quantity;
+      searchRowsData.price += searchRowsData.book_price * quantity;
     } else {
       rowsData.value.set(isbnHook.value, {
         id: data.id,
         isbn: isbnHook.value,
         name: data.name,
         quantity: quantity,
+        book_price: parseInt(data.price),
         price: data.price * quantity,
       });
     }
@@ -132,11 +138,13 @@ function ShopManagerImport(props: { token: TokenType }) {
               <th>ISBN</th>
               <th>Tên sách</th>
               <th>Số lượng</th>
+              <th> Đơn giá</th>
               <th>Thành tiền</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <TableRows books={rowsData.value} />
+            <TableRows books={rowsData.value} deleteFn={rowsData.deleteItem} />
           </tbody>
         </Table>
       </div>
@@ -194,24 +202,28 @@ function ShopManagerImport(props: { token: TokenType }) {
   );
 }
 
-function TableRows(props: { books: RowsDataType }) {
+function TableRows(props: { books: RowsDataType; deleteFn: (key: string) => void }) {
   return (
     <>
       {Array.from(props.books.values()).map((row, index) => (
-        <Row key={index} index={index + 1} rowItem={row} />
+        <Row key={index} index={index + 1} rowItem={row} deleteFn={props.deleteFn} />
       ))}
     </>
   );
 }
 
-function Row(props: { index: number; rowItem: InputRow }) {
+function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) => void }) {
   return (
     <tr>
       <td className={cashierStyles.tdItem}>{props.index}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.isbn}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.name}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.quantity}</td>
+      <td className={cashierStyles.tdItem}>{props.rowItem.book_price}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.price}</td>
+      <td className={cashierStyles.tdItem}>
+        <DeleteIcon className={cashierStyles.cursor} onClick={() => props.deleteFn(props.rowItem.isbn)}></DeleteIcon>
+      </td>
     </tr>
   );
 }

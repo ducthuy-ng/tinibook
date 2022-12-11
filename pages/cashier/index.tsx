@@ -14,7 +14,7 @@ import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
 import { ParsedUrlQuery } from 'querystring';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Header, { HeaderCashier } from '../../components/Header/Header';
+import { HeaderCashier } from '../../components/Header/Header';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = checkRBACRedirect(context, Occupation.STAFF);

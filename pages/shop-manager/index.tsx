@@ -4,7 +4,6 @@ import React from 'react';
 import styles from '../../styles/SearchBook.module.css';
 import { GetServerSideProps } from 'next';
 import { Occupation } from '../../model/identityaccess/domain/employee';
-import { useRouter } from 'next/router';
 import { useInputHook } from '../../components/Input/Input';
 import Pagination, { usePagination } from '../../components/Pagination/Pagination';
 import Searchbar from '../../components/Searchbar/Searchbar';
@@ -64,7 +63,7 @@ const ShopManager = (props: { token: TokenType; query: ParsedUrlQuery }) => {
         <HeaderWithSidebar hook={headerHook} sidebar={ShopManagementSidebar} token={props.token} />
 
         <div className={styles.title_row}>
-          <h1 className={styles.title}>Sách tồn kho {props.token.assignedBuilding}</h1>
+          <h1 className={styles.title}>Sách tại cửa hàng </h1>
           <Searchbar name={'book_name'} placeholder={'Nhập tên sách cần tìm...'} inputHook={searchBookName} />
           <input type={'submit'} hidden={true} />
         </div>

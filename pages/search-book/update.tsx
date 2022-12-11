@@ -56,7 +56,6 @@ export default function UpdateBook(props: { token: TokenType; query: ParsedUrlQu
   const price = useInputHook();
   const pagesNum = useInputHook();
 
-  // Resolve react-hooks/exhaustive-deps
   const nameChangeValue = name.changeValue;
   const typeChangeValue = type.changeValue;
   const authorChangeValue = author.changeValue;
@@ -193,7 +192,6 @@ export default function UpdateBook(props: { token: TokenType; query: ParsedUrlQu
           <Button type={'submit'}>Lưu</Button>
         </div>
       </form>
-      {/*{error ? 'Không thể kết nối đến máy chủ' : !data ? 'Đang tải' : <DisplayForm />}*/}
       <Popup popupHook={popupHook} />
     </div>
   );
