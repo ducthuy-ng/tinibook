@@ -119,8 +119,8 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
         isbn: isbnHook.value,
         name: data.name,
         quantity: quantity,
-        book_price: data.price,
-        price: data.price * quantity,
+        book_price: parseInt(data.price),
+        price: parseInt(data.price) * quantity,
       });
     }
 
