@@ -97,7 +97,12 @@ class BookRepoPG implements BookRepo {
       const arr_data = Object.entries(newBook).map((el) => el[1]);
       await query(
         `INSERT INTO book
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         ON CONFLICT (id) DO UPDATE SET type=$4,
+                                        author=$5,
+                                        coverurl=$6,
+                                        publisher=$7,
+                                        pagesnum=$8`,
         arr_data
       );
     } catch (err) {
