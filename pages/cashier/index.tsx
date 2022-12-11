@@ -216,7 +216,7 @@ function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) 
       <td className={cashierStyles.tdItem}>{props.rowItem.book_price}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.price}</td>
       <td className={cashierStyles.tdItem}>
-        <DeleteIcon onClick={() => props.deleteFn(props.rowItem.isbn)}></DeleteIcon>
+        <DeleteIcon className={cashierStyles.cursor} onClick={() => props.deleteFn(props.rowItem.isbn)}></DeleteIcon>
       </td>
     </tr>
   );
