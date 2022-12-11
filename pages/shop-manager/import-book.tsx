@@ -1,7 +1,6 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import Button from '../../components/Button/Button';
-import PayModal from '../../components/Modal/CashierModal/PayModal';
 import Table from '../../components/Table/Table';
 import Input, { useInputHook } from '../../components/Input/Input';
 import cashierStyles from '../../styles/Cashier.module.css';
@@ -9,15 +8,14 @@ import { checkRBACRedirect } from '../../lib/redirect';
 import { Occupation } from '../../model/identityaccess/domain/employee';
 import Popup, { usePopup } from '../../components/Popup/Popup';
 import { GetServerSideProps } from 'next';
-import { useModal } from '../../components/Modal/Modal';
 import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
-import { ParsedUrlQuery } from 'querystring';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Header, { HeaderCashier } from '../../components/Header/Header';
+import HeaderWithSidebar, { useHeaderWithSidebarHook } from '../../components/HeaderWithSidebar/HeaderWithSidebar';
+import ShopManagementSidebar from '../../components/Sidebar/Specifics/ShopManagerSidebar';
+// import { RowsDataHook, RowsDataType } from '../../pages/cashier';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const redirect = checkRBACRedirect(context, Occupation.STAFF);
+  const redirect = checkRBACRedirect(context, Occupation.SHOP_MANAGER);
   if (redirect) return redirect;
 
   return {
@@ -26,54 +24,57 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
-
 type InputRow = {
   id: string;
   isbn: string;
   name: string;
   quantity: number;
-  book_price: number;
   price: number;
 };
 
-export type RowsDataType = Map<string, InputRow>;
+type RowsDataType = Map<string, InputRow>;
 
 export type RowsDataHook = {
   value: RowsDataType;
   setValue: Dispatch<SetStateAction<RowsDataType>>;
-  deleteItem: (key: string) => void;
+  totalCost: number;
+  setTotalCost: Dispatch<SetStateAction<number>>;
 };
 
 const useRowsData = (): RowsDataHook => {
   const [value, setValue] = useState<RowsDataType>(new Map());
+  const [totalCost, setTotalCost] = useState(0);
 
-  function deleteItem(key: string) {
-    const newValue = new Map(value);
-    newValue.delete(key);
-    setValue(newValue);
-  }
+  useEffect(() => {
+    setTotalCost(
+      Array.from(value.values()).reduce(
+        (accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity,
+        0
+      )
+    );
+  }, [value]);
 
-  return { value, setValue, deleteItem };
+  return { value, setValue, totalCost, setTotalCost };
 };
 
-function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
+function ShopManagerImport(props: { token: TokenType }) {
   const current = new Date();
   const date = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`;
 
+  const headerHook = useHeaderWithSidebarHook();
   const isbnHook = useInputHook();
   const quantityHook = useInputHook();
 
-  const payModalHook = useModal();
+  // const payModalHook = useModal();
   const popupHook = usePopup();
   const rowsData = useRowsData();
-
   const addTableRows = async () => {
     const quantity = parseInt(quantityHook.value);
     if (!quantity) {
       popupHook.setMessage('Số lượng không hợp lệ');
-      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       quantityHook.changeValue('');
+
       return;
     }
 
@@ -81,7 +82,6 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
 
     if (!resp.ok) {
       popupHook.setMessage('Mã ISBN không hợp lệ');
-      popupHook.setCurrentVariant('warning');
       popupHook.setShowingState(true);
       isbnHook.changeValue('');
       return;
@@ -92,36 +92,16 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
       (location: { [x: string]: string }) => location['buildingId'] == props.token.assignedBuilding
     );
 
-    if (!locationDetail) {
-      popupHook.setMessage('Sách không còn tồn kho');
-      popupHook.setCurrentVariant('warning');
-      popupHook.setShowingState(true);
-      isbnHook.changeValue('');
-      quantityHook.changeValue('');
-      return;
-    }
-
-    if (locationDetail['amount'] < quantity || locationDetail['amount'] < quantity) {
-      popupHook.setMessage('Số lượng sách không đủ');
-      popupHook.setCurrentVariant('warning');
-      popupHook.setShowingState(true);
-      isbnHook.changeValue('');
-      quantityHook.changeValue('');
-      return;
-    }
-
     let searchRowsData = rowsData.value.get(isbnHook.value);
     if (searchRowsData) {
       searchRowsData.quantity += quantity;
-      searchRowsData.price += quantity * searchRowsData.price;
     } else {
       rowsData.value.set(isbnHook.value, {
         id: data.id,
         isbn: isbnHook.value,
         name: data.name,
         quantity: quantity,
-        book_price: parseInt(data.price),
-        price: parseInt(data.price) * quantity,
+        price: data.price * quantity,
       });
     }
 
@@ -132,10 +112,10 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
 
   return (
     <div>
-      <HeaderCashier token={props.token} />
+      <HeaderWithSidebar hook={headerHook} sidebar={ShopManagementSidebar} token={props.token} />
       <div className={cashierStyles.container}>
         <div className={classNames(cashierStyles.row, cashierStyles.row_input)}>
-          <h1>Tạo hoá đơn</h1>
+          <h1> Nhập sách tại cửa hàng</h1>
         </div>
         <div className={classNames(cashierStyles.row, cashierStyles.row_input)}>
           <label htmlFor="date" className={cashierStyles.label}>
@@ -152,13 +132,11 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
               <th>ISBN</th>
               <th>Tên sách</th>
               <th>Số lượng</th>
-              <th>Đơn giá</th>
               <th>Thành tiền</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
-            <TableRows books={rowsData.value} deleteFn={rowsData.deleteItem} />
+            <TableRows books={rowsData.value} />
           </tbody>
         </Table>
       </div>
@@ -184,13 +162,31 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
             Thêm
           </Button>
           <Button
-            onClick={() => {
-              payModalHook.setDisplayState(true);
+            onClick={async () => {
+              const resp = await fetch(`/api/finance/import-receipts`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  items: Array.from(rowsData.value.values()).map((item) => {
+                    console.log(item);
+                    return {
+                      book_id: item.id,
+                      amount: item.quantity,
+                    };
+                  }),
+                }),
+              });
+              if (!resp.ok) {
+                popupHook.setMessage('Không thể ghi nhận hoá đơn');
+                popupHook.setShowingState(true);
+              }
+              rowsData.setValue(new Map());
             }}
           >
-            Thanh toán
+            Tạo
           </Button>
-          <PayModal rowsDataHook={rowsData} popupHook={popupHook} hook={payModalHook} />
         </div>
       </div>
       <Popup popupHook={popupHook} />;
@@ -198,30 +194,26 @@ function Cashier(props: { token: TokenType; query: ParsedUrlQuery }) {
   );
 }
 
-function TableRows(props: { books: RowsDataType; deleteFn: (key: string) => void }) {
+function TableRows(props: { books: RowsDataType }) {
   return (
     <>
       {Array.from(props.books.values()).map((row, index) => (
-        <Row key={index} index={index + 1} rowItem={row} deleteFn={props.deleteFn} />
+        <Row key={index} index={index + 1} rowItem={row} />
       ))}
     </>
   );
 }
 
-function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) => void }) {
+function Row(props: { index: number; rowItem: InputRow }) {
   return (
     <tr>
       <td className={cashierStyles.tdItem}>{props.index}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.isbn}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.name}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.quantity}</td>
-      <td className={cashierStyles.tdItem}>{props.rowItem.book_price}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.price}</td>
-      <td className={cashierStyles.tdItem}>
-        <DeleteIcon className={cashierStyles.cursor} onClick={() => props.deleteFn(props.rowItem.isbn)}></DeleteIcon>
-      </td>
     </tr>
   );
 }
 
-export default Cashier;
+export default ShopManagerImport;
