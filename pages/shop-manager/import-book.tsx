@@ -178,7 +178,6 @@ function ShopManagerImport(props: { token: TokenType }) {
                 },
                 body: JSON.stringify({
                   items: Array.from(rowsData.value.values()).map((item) => {
-                    console.log(item);
                     return {
                       book_id: item.id,
                       amount: item.quantity,

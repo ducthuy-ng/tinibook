@@ -64,8 +64,6 @@ async function GetAllReceiptBrief(req: NextApiRequest, res: NextApiResponse) {
   let page = parseInt(String(req.query['page'])) || 1;
   let limit = parseInt(String(req.query['limit'])) || 10;
 
-  console.log(page);
-
   if (req.query['maxPage']) return getMaxPage(req, res, limit);
 
   try {
@@ -88,12 +86,12 @@ async function GetAllReceiptBrief(req: NextApiRequest, res: NextApiResponse) {
 
     return res.send(parsedResults);
   } catch (err) {
+    console.error(err);
     return sendInternalErrorResponse(res);
   }
 }
 
 async function getMaxPage(req: NextApiRequest, res: NextApiResponse, limit: number) {
-  console.log('called');
   try {
     const results = await query(
       `SELECT COUNT(*)

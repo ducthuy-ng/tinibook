@@ -49,7 +49,6 @@ function SaleRecordDisplay(props: { receipt: SWRResponse<SaleReceiptDetail> }) {
   if (!props.receipt.data) return <div>Đang tải</div>;
 
   const receipt = props.receipt.data;
-  console.log(receipt);
   return (
     <div className={classNames(styles.container, moduleStyles.container)}>
       <div className={classNames(styles.row)}>
@@ -104,9 +103,6 @@ function SaleRecordDisplay(props: { receipt: SWRResponse<SaleReceiptDetail> }) {
         >
           Quay lại
         </Button>
-        {/*{props.token?.occupation == Occupation.STORAGE_MANAGER ? (*/}
-        {/*  <Button onClick={() => router.push(`/search-book/update?isbn=${isbn}`)}>Cập nhật</Button>*/}
-        {/*) : null}*/}
       </div>
     </div>
   );
