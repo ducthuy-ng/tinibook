@@ -22,14 +22,11 @@ export class StorageService {
     for (const item of items) {
       try {
         const existingStorageItem = await StorageService.storageRepo.getStorageItem(item.bookId, buildingId);
-        console.log(existingStorageItem);
         existingStorageItem.addIn(item.amount);
         storageItemList.push(existingStorageItem);
       } catch (err) {
         if (err instanceof StorageItemNotFound) {
-          console.log(item);
           const storageItem = new StorageItem(item.bookId, buildingId, item.amount);
-          console.log(storageItem);
           storageItemList.push(storageItem);
         }
       }
