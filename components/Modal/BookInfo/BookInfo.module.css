@@ -20,3 +20,13 @@
 
   text-align: center;
 }
+
+.table > tbody > tr > td.book_name_column {
+  text-align: left;
+
+  max-width: 500px;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

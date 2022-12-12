@@ -30,9 +30,8 @@ export interface SaleReceiptDetail {
   orderedBooks: OrderedBook[];
 }
 
-async function getOrderedBookFromItems(items: string): Promise<OrderedBook[]> {
+async function getOrderedBookFromItems(receiptItems: OrderedBookPG[]): Promise<OrderedBook[]> {
   const bookRecords: OrderedBook[] = [];
-  const receiptItems: OrderedBookPG[] = JSON.parse(items);
 
   for (const item of receiptItems) {
     const result = await query('SELECT isbn, name, price FROM book WHERE id = $1', [item['book_id']]);
@@ -70,6 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     receiptRecord = result.rows[0];
   } catch (e) {
+    console.error(e);
     return sendInternalErrorResponse(res);
   }
 
@@ -77,6 +77,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     bookRecords = await getOrderedBookFromItems(receiptRecord['items']);
   } catch (e) {
+    console.error(e);
     return sendInternalErrorResponse(res);
   }
 

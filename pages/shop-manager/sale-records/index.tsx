@@ -1,19 +1,18 @@
-import { TokenType } from '../../model/identityaccess/authService';
-import { ParsedUrlQuery } from 'querystring';
-import HeaderWithSidebar, { useHeaderWithSidebarHook } from '../../components/HeaderWithSidebar/HeaderWithSidebar';
-import ShopManagementSidebar from '../../components/Sidebar/Specifics/ShopManagerSidebar';
-
-import styles from '../../styles/SaleRecords.module.css';
 import { GetServerSideProps } from 'next';
-import { checkRBACRedirect } from '../../lib/redirect';
-import { Occupation } from '../../model/identityaccess/domain/employee';
-import { getToken } from '../../lib/jwt';
-import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite';
-
-import { SaleReceiptBrief } from '../api/finance/sale-receipts';
-import { fetcher } from '../../lib/swr';
+import { checkRBACRedirect } from '../../../lib/redirect';
+import { getToken } from '../../../lib/jwt';
+import { TokenType } from '../../../model/identityaccess/authService';
+import { ParsedUrlQuery } from 'querystring';
+import HeaderWithSidebar, { useHeaderWithSidebarHook } from '../../../components/HeaderWithSidebar/HeaderWithSidebar';
+import ShopManagementSidebar from '../../../components/Sidebar/Specifics/ShopManagerSidebar';
+import { Occupation } from '../../../model/identityaccess/domain/employee';
 import useSWR from 'swr';
-import Button from '../../components/Button/Button';
+import useSWRInfinite, { SWRInfiniteKeyLoader } from 'swr/infinite';
+import { SaleReceiptBrief } from '../../api/finance/sale-receipts';
+import Button from '../../../components/Button/Button';
+import styles from '../../../styles/SaleRecords.module.css';
+import { fetcher } from '../../../lib/swr';
+import Link from 'next/link';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = checkRBACRedirect(context, Occupation.SHOP_MANAGER);
@@ -60,10 +59,12 @@ function DisplayRecords() {
       <ul className={styles.receiptList}>
         {data.map((receiptList, index) => {
           return receiptList.map((receipt) => (
-            <li className={styles.receiptItem} key={receipt.id}>
-              <div>{new Date(receipt.createdDate).toLocaleDateString()}</div>
-              <div>{receipt.price}</div>
-            </li>
+            <Link key={receipt.id} href={`/shop-manager/sale-records/detail?id=${receipt.id}`}>
+              <li className={styles.receiptItem}>
+                <div>{new Date(receipt.createdDate).toLocaleDateString()}</div>
+                <div>{receipt.price}</div>
+              </li>
+            </Link>
           ));
         })}
       </ul>
