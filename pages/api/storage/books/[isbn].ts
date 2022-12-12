@@ -20,6 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (Array.isArray(isbn)) isbn = isbn[0];
 
+  console.log(req.method);
+
   switch (req.method) {
     case 'GET':
       return getBook(isbn, req, res);
@@ -55,6 +57,7 @@ async function getBook(isbn: string, req: NextApiRequest, res: NextApiResponse) 
 }
 
 async function updateBook(isbn: string, req: NextApiRequest, res: NextApiResponse) {
+  console.log(isbn);
   try {
     const book = await bookRepo.getByISBN(isbn);
 

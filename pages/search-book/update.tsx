@@ -147,7 +147,7 @@ export default function UpdateBook(props: { token: TokenType; query: ParsedUrlQu
           <label htmlFor={'name'}>
             <p>Tên sách:</p>
           </label>
-          <Input id={'name'} inputHook={name} disabled={isLoading} />
+          <Input id={'name'} inputHook={name} disabled={true} />
         </div>
         <div className={specificStyles.value_row}>
           <label htmlFor={'type'}>
