@@ -1,7 +1,8 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import styles from './Select.module.css';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 export interface SelectHook<T> {
   value: T | undefined;
@@ -26,7 +27,7 @@ export default function Select<T>(props: { id?: string; className?: string; chil
         </option>
         {props.children}
       </select>
-      <ArrowDropDownIcon className={styles.select_icon} />
+      <FontAwesomeIcon icon={faCaretDown} className={styles.select_icon} />
     </div>
   );
 }

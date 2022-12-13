@@ -1,7 +1,8 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import styles from './Pagination.module.css';
 import classNames from 'classnames';
-import { NavigateBefore, NavigateNext } from '@mui/icons-material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 type PaginationHook = {
   page: number;
@@ -52,13 +53,13 @@ function Pagination(props: { paginationHook: PaginationHook; maxPage?: number; m
         disable={props.paginationHook.page == 1}
         onClick={() => props.paginationHook.setPage(props.paginationHook.page - 1)}
       >
-        <NavigateBefore />
+        <FontAwesomeIcon icon={faChevronLeft} />
       </PaginationItem>
 
       <PaginationItem>{props.paginationHook.page}</PaginationItem>
 
       <PaginationItem onClick={() => props.paginationHook.setPage(props.paginationHook.page + 1)}>
-        <NavigateNext />
+        <FontAwesomeIcon icon={faChevronRight} />
       </PaginationItem>
     </div>
   );

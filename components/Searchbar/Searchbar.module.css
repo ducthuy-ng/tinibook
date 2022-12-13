@@ -9,7 +9,10 @@
 }
 
 .iconSearch {
+  height: 20px;
+
   position: absolute;
-  height: 100%;
   margin: auto 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }

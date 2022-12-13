@@ -13,8 +13,9 @@ import { useModal } from '../../components/Modal/Modal';
 import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
 import { ParsedUrlQuery } from 'querystring';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { HeaderCashier } from '../../components/Header/Header';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = checkRBACRedirect(context, Occupation.STAFF);
@@ -218,7 +219,11 @@ function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) 
       <td className={cashierStyles.tdItem}>{props.rowItem.book_price}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.price}</td>
       <td className={cashierStyles.tdItem}>
-        <DeleteIcon className={cashierStyles.cursor} onClick={() => props.deleteFn(props.rowItem.isbn)}></DeleteIcon>
+        <FontAwesomeIcon
+          icon={faTrash}
+          className={cashierStyles.cursor}
+          onClick={() => props.deleteFn(props.rowItem.isbn)}
+        />
       </td>
     </tr>
   );

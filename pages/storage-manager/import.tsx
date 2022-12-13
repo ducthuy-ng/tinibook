@@ -12,6 +12,9 @@ import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
 import HeaderWithSidebar, { useHeaderWithSidebarHook } from '../../components/HeaderWithSidebar/HeaderWithSidebar';
 import StorageManagerSidebar from '../../components/Sidebar/Specifics/StorageManagerSidebar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { RowsDataType } from '../cashier';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = checkRBACRedirect(context, Occupation.STORAGE_MANAGER);
@@ -32,29 +35,22 @@ type InputRow = {
   price: number;
 };
 
-type RowsDataType = Map<string, InputRow>;
-
 export type RowsDataHook = {
   value: RowsDataType;
   setValue: Dispatch<SetStateAction<RowsDataType>>;
-  totalCost: number;
-  setTotalCost: Dispatch<SetStateAction<number>>;
+  deleteItem: (key: string) => void;
 };
 
 const useRowsData = (): RowsDataHook => {
   const [value, setValue] = useState<RowsDataType>(new Map());
-  const [totalCost, setTotalCost] = useState(0);
 
-  useEffect(() => {
-    setTotalCost(
-      Array.from(value.values()).reduce(
-        (accumulator, currentValue) => accumulator + currentValue.price * currentValue.quantity,
-        0
-      )
-    );
-  }, [value]);
+  function deleteItem(key: string) {
+    const newValue = new Map(value);
+    newValue.delete(key);
+    setValue(newValue);
+  }
 
-  return { value, setValue, totalCost, setTotalCost };
+  return { value, setValue, deleteItem };
 };
 
 function StorageManagerImport(props: { token: TokenType }) {
@@ -108,7 +104,8 @@ function StorageManagerImport(props: { token: TokenType }) {
         isbn: isbnHook.value,
         name: data.name,
         quantity: quantity,
-        price: data.price,
+        book_price: parseInt(data.price),
+        price: parseInt(data.price) * quantity,
       });
     }
 
@@ -172,7 +169,7 @@ function StorageManagerImport(props: { token: TokenType }) {
             </tr>
           </thead>
           <tbody>
-            <TableRows books={rowsData.value} />
+            <TableRows books={rowsData.value} deleteFn={rowsData.deleteItem} />
           </tbody>
         </Table>
       </div>
@@ -211,17 +208,17 @@ function StorageManagerImport(props: { token: TokenType }) {
   );
 }
 
-function TableRows(props: { books: RowsDataType }) {
+function TableRows(props: { books: RowsDataType; deleteFn: (key: string) => void }) {
   return (
     <>
       {Array.from(props.books.values()).map((row, index) => (
-        <Row key={index} index={index + 1} rowItem={row} />
+        <Row key={index} index={index + 1} rowItem={row} deleteFn={props.deleteFn} />
       ))}
     </>
   );
 }
 
-function Row(props: { index: number; rowItem: InputRow }) {
+function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) => void }) {
   return (
     <tr>
       <td className={cashierStyles.tdItem}>{props.index}</td>
@@ -229,6 +226,13 @@ function Row(props: { index: number; rowItem: InputRow }) {
       <td className={cashierStyles.tdItem}>{props.rowItem.name}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.quantity}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.price}</td>
+      <td className={cashierStyles.tdItem}>
+        <FontAwesomeIcon
+          icon={faTrash}
+          className={cashierStyles.cursor}
+          onClick={() => props.deleteFn(props.rowItem.isbn)}
+        />
+      </td>
     </tr>
   );
 }

@@ -12,7 +12,8 @@ import { TokenType } from '../../model/identityaccess/authService';
 import { getToken } from '../../lib/jwt';
 import HeaderWithSidebar, { useHeaderWithSidebarHook } from '../../components/HeaderWithSidebar/HeaderWithSidebar';
 import ShopManagementSidebar from '../../components/Sidebar/Specifics/ShopManagerSidebar';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = checkRBACRedirect(context, Occupation.SHOP_MANAGER);
@@ -221,7 +222,11 @@ function Row(props: { index: number; rowItem: InputRow; deleteFn: (key: string) 
       <td className={cashierStyles.tdItem}>{props.rowItem.book_price}</td>
       <td className={cashierStyles.tdItem}>{props.rowItem.price}</td>
       <td className={cashierStyles.tdItem}>
-        <DeleteIcon className={cashierStyles.cursor} onClick={() => props.deleteFn(props.rowItem.isbn)}></DeleteIcon>
+        <FontAwesomeIcon
+          icon={faTrash}
+          className={cashierStyles.cursor}
+          onClick={() => props.deleteFn(props.rowItem.isbn)}
+        />
       </td>
     </tr>
   );
