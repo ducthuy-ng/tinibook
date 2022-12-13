@@ -3,24 +3,34 @@
   top: 0;
 }
 
-.receiptList {
-  height: fit-content;
-  padding: 10px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.receipt_table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: scroll;
 }
 
-.receiptItem {
-  height: 50px;
-  padding: 10px;
-  display: flex;
+.receipt_table_row {
+  text-align: center;
+}
 
-  border: black 1px solid;
-  border-radius: 15px;
-  align-items: center;
-  justify-content: space-between;
+.receipt_table_item_row:hover {
+  cursor: pointer;
+  background: #faf8f7;
+}
+
+.receipt_table_row > th {
+  background: #faf8f7;
+}
+
+.receipt_table_row > td,
+.receipt_table_row > th {
+  padding: 15px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.receipt_table_row > td:first-child,
+.receipt_table_row > th:first-child {
+  text-align: left;
 }
 
 .bottomRow {
