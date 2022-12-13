@@ -1,14 +1,14 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { AccountBox } from '@mui/icons-material';
-import MenuIcon from '@mui/icons-material/Menu';
 import Button from '../Button/Button';
 
 import logo from '../../public/logo.png';
 import styles from './Header.module.css';
 import { TokenType } from '../../model/identityaccess/authService';
 import { useRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   className?: string;
@@ -32,7 +32,7 @@ function Header(props: Props) {
           dropdownHook.setShowingState(!dropdownHook.isShowing);
         }}
       >
-        <AccountBox className={styles.avatar} />
+        <FontAwesomeIcon icon={faUserCircle} className={styles.avatar} />
         <div className={styles.user_name}>{props.token.employeeName}</div>
         <UserDropdown hook={dropdownHook} token={props.token} />
       </div>
@@ -47,7 +47,7 @@ type MenuButtonProps = {
 function MenuButton(props: MenuButtonProps) {
   return (
     <Button type={'button'} className={styles.menu_button} onClick={props.onClick}>
-      <MenuIcon />
+      <FontAwesomeIcon icon={faBars} className={styles.menu_button_icon} />
     </Button>
   );
 }
@@ -105,7 +105,7 @@ export function HeaderCashier(props: { token: TokenType }) {
           dropdownHook.setShowingState(!dropdownHook.isShowing);
         }}
       >
-        <AccountBox className={styles.avatar} />
+        <FontAwesomeIcon icon={faUserCircle} className={styles.avatar} />
         <div className={styles.user_name}>{props.token.employeeName}</div>
         <UserDropdown hook={dropdownHook} token={props.token} />
       </div>

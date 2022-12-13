@@ -2,7 +2,8 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import classNames from 'classnames';
 
 import styles from './Modal.module.css';
-import { Close } from '@mui/icons-material';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export type ModalHook = {
   displayState: boolean;
@@ -30,7 +31,11 @@ function Modal(props: {
     <div className={classNames(styles.modal, props.hook.displayState ? styles.modal_show : styles.modal_hide)}>
       <div className={classNames(styles.modalContainer)}>
         <div className={styles.titleCloseBtn}>
-          <Close className={styles.closeBtn} onClick={() => props.hook.setDisplayState(false)} />
+          <FontAwesomeIcon
+            icon={faClose}
+            className={styles.closeBtn}
+            onClick={() => props.hook.setDisplayState(false)}
+          />
         </div>
         {props.children}
       </div>

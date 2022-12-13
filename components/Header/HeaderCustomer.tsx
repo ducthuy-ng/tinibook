@@ -4,7 +4,8 @@ import Image from 'next/image';
 import logo from '../../public/logo.png';
 import styles from './Header.module.css';
 import Link from 'next/link';
-import { AccountBox } from '@mui/icons-material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 function HeaderCustomer() {
   return (
@@ -15,7 +16,7 @@ function HeaderCustomer() {
       </div>
       <Link href={'/login'}>
         <div className={styles.user_info}>
-          <AccountBox className={styles.avatar} />
+          <FontAwesomeIcon icon={faUserCircle} className={styles.avatar} />
           <div className={styles.user_name}>Đăng nhập</div>
         </div>
       </Link>
