@@ -73,10 +73,12 @@ async function createNewEmployee(req: NextApiRequest, res: NextApiResponse) {
     req.body['assigned_building']
   );
 
-  employeeRepo
-    .save(employee)
-    .then(() => sendCreatedResponse(res))
-    .catch(() => sendInternalErrorResponse(res));
+  try {
+    await employeeRepo.save(employee);
+    return sendCreatedResponse(res);
+  } catch (e) {
+    return sendInternalErrorResponse(res);
+  }
 }
 
 async function deleteEmployee(req: NextApiRequest, res: NextApiResponse) {
