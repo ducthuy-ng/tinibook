@@ -43,14 +43,19 @@ export default function AddEmployee(props: { query: ParsedUrlQuery; token: Token
   const ssnHook = useInputHook();
   const emailHook = useInputHook();
   const phoneHook = useInputHook();
-  const occupationHook = useSelect(null);
+  const occupationHook = useSelect<Occupation>(Occupation.STAFF);
 
   const occupations: string[] = [];
   for (const occupation in Occupation) occupations.push(occupation);
 
-  const sendAddEmployeeRequest: MouseEventHandler<HTMLButtonElement> = async (event) => {
-    event.preventDefault();
+  const resetForm = () => {
+    fullNameHook.changeValue('');
+    ssnHook.changeValue('');
+    emailHook.changeValue('');
+    phoneHook.changeValue('');
+  };
 
+  const sendAddEmployeeRequest: MouseEventHandler<HTMLButtonElement> = async (event) => {
     const body = {
       name: fullNameHook.value,
       ssn: ssnHook.value,
@@ -82,10 +87,11 @@ export default function AddEmployee(props: { query: ParsedUrlQuery; token: Token
     });
 
     switch (resp.status) {
-      case 200:
+      case 201:
         popupHook.setCurrentVariant('success');
         popupHook.setMessage('Ghi nhận thành công');
         popupHook.setShowingState(true);
+        resetForm();
         return;
 
       default:
@@ -141,8 +147,10 @@ export default function AddEmployee(props: { query: ParsedUrlQuery; token: Token
           </Select>
         </div>
         <div className={classNames(styles.row, styles.row_center)}>
-          <Button onClick={() => router.push('/accountant/human-resources')}>Quay lại</Button>
-          <Button type={'submit'} onClick={sendAddEmployeeRequest}>
+          <Button type={'button'} onClick={() => router.push('/accountant/human-resources')}>
+            Quay lại
+          </Button>
+          <Button type={'button'} onClick={sendAddEmployeeRequest}>
             Xác nhận
           </Button>
         </div>
